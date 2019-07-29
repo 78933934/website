@@ -29,7 +29,7 @@ class CreateGoodsTable extends Migration
             $table->text('size_desc')->comment('商品规格描述');
             $table->string('main_image_url',255)->comment('封面主图');
             $table->string('main_video_url',255)->nullable()->comment('封面视频');
-            $table->dateTime('deleted_at')->nullable();
+            $table->dateTime('deleted_at')->nullable()->comment('禁用');
             $table->timestamps();
         });
     }

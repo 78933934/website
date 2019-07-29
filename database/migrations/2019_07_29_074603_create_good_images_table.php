@@ -15,7 +15,7 @@ class CreateGoodImagesTable extends Migration
     {
         Schema::create('good_images', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('good_id');
+            $table->integer('good_id')->comment('商品id');
             $table->string('image_url',255)->comment('商品轮播图');
             $table->timestamps();
         });
