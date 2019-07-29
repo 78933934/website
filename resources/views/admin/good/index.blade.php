@@ -21,7 +21,7 @@
                 </ul>
             </div>
         @endif
-        @if (session('info'))
+        @if (session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
             </div>
@@ -136,14 +136,22 @@
                             </thead>
 
                             <tbody>
+
+                            @foreach($goods as $good)
                                 <tr>
-                                    <td>1</td>
-                                    <td>sadas</td>
-                                    <td>asdas</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
+                                    <td>{{$good->id}}</td>
+                                    <td>{{$good->title}}</td>
+                                    <td>{{$good->name}}</td>
+                                    <td>{{$good->price}}</td>
+                                    <td>
+                                        @if($good->deleted_at)
+                                            <span style="color: red">已禁用</span>
+                                        @else
+                                            <span style="color: green">启用</span>
+                                        @endif
+                                    </td>
+                                    <td>{{$good->created_at}}</td>
+                                    <td>{{$good->username}}</td>
                                     <td>
                                         <div class="grid-dropdown-actions dropdown">
                                             <a href="#" style="padding: 0 10px;" class="dropdown-toggle" data-toggle="dropdown">
@@ -151,13 +159,15 @@
                                             </a>
                                             <ul class="dropdown-menu" style="min-width: 50px !important;box-shadow: 0 2px 3px 0 rgba(0,0,0,.2);border-radius:0;left: -65px;top: 5px;">
 
-                                                <li><a href="/admin/auth/users/1/edit" class="grid-row-action">编辑</a></li>
-                                                <li><a href="/admin/auth/users/1" class="grid-row-action">删除</a></li>
+                                                <li><a href="" class="grid-row-action">编辑</a></li>
+                                                <li><a href="" class="grid-row-action">删除</a></li>
 
                                             </ul>
                                         </div>
                                     </td>
                                 </tr>
+
+                                @endforeach
 
                             </tbody>
                         </table>
@@ -169,7 +179,7 @@
 
                         <div class="pull-right">
                             <!-- Previous Page Link -->
-
+                            {{$goods->links()}}
                         </div>
 
                         <label class="control-label pull-right" style="margin-right: 10px;margin-top: 20px; font-weight: 100;">

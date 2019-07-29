@@ -3,7 +3,6 @@
 namespace App\Admin\Controllers;
 
 use App\Models\Good;
-use App\Models\GoodImage;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Storage;
@@ -19,9 +18,12 @@ class GoodController extends Controller
     //首页
     public function index(Request $request){
 
-        admin_success('ok');
+//        dd(Good::find(1)->category);
 
-        return view('admin.good.index');
+        $gd = new Good();
+        $goods = $gd->get_data();
+
+        return view('admin.good.index',compact('goods'));
     }
 
     //新增页面
@@ -66,7 +68,7 @@ class GoodController extends Controller
         $mod = Good::create(array_merge(
             $insert_data,
             [
-                'created_admin_user_id' => Admin::user()->id,
+                'admin_user_id' => Admin::user()->id,
                 'main_image_url' => $main_image_url,
                 'main_video_url' => $main_video_url ?? null,
                 'pay_types' => $pay_types
@@ -87,8 +89,7 @@ class GoodController extends Controller
         }
 
         if($mod){
-//            return redirect(route('goods.index'))->with('success','添加成功');
-            admin_success('ok');
+            return redirect(route('goods.index'))->with('success','添加成功');
         }else{
             return redirect(route('goods.index'))->with('error','添加失败');
         }
@@ -113,7 +114,7 @@ class GoodController extends Controller
     protected function upload($file){
 
         # 允许上传的扩展名
-        $allow_extensions = ['xlsx','xls','csv','docx','doc','jpg','jpeg','png','gif'];
+        $allow_extensions = ['jpg','jpeg','png','gif','mp4'];
         $allow_extensions_str = implode(',',$allow_extensions);
 
         if(!$file->isValid())
@@ -129,13 +130,13 @@ class GoodController extends Controller
             admin_error('只允许上传指定格式文件ext:'.$allow_extensions_str);
         }
 
-        # 文件大小
-        $file_size = $file->getClientSize();
-
-        if($file_size > AttachmentController::FILE_LIMIT)
-        {
-            fail('超过文件大小限制4MB');
-        }
+//        # 文件大小
+//        $file_size = $file->getClientSize();
+//
+//        if($file_size > AttachmentController::FILE_LIMIT)
+//        {
+//            admin_error('超过文件大小限制4MB');
+//        }
 
         $doc_path = AttachmentController::ATTACHMENT_PATH.date('Y').'/'.date('m').'/'.date('d');
 

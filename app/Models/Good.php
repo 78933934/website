@@ -11,6 +11,8 @@ class Good extends Model
 
     protected $table = 'goods';
 
+    protected $page_size = 20;
+
     /**
      * 可以被批量赋值的属性。
      *
@@ -23,7 +25,7 @@ class Good extends Model
         'price',
         'product_id',
         'product_name',
-        'created_admin_user_id',
+        'admin_user_id',
         'category_id',
         'pay_types',
         'show_comment',
@@ -38,6 +40,30 @@ class Good extends Model
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function list_images(){
-        return $this->hasMany(GoodImage::class, 'good_id','id');
+        return $this->hasMany(GoodImage::class);
+    }
+
+    public function admin_user(){
+        return $this->belongsTo(AdminUser::class);
+    }
+
+    public function category(){
+        return $this->belongsTo(GoodCategory::class,'category_id');
+    }
+
+    public function get_data(){
+
+        return Good::with(['list_images'])
+            ->leftJoin('admin_users','admin_users.id','goods.admin_user_id')
+            ->select(
+                'goods.id',
+                'goods.title',
+                'goods.name',
+                'goods.price',
+                'goods.created_at',
+                'admin_users.username'
+            )
+            ->orderBy('goods.id', 'desc')
+            ->paginate($this->page_size);
     }
 }
