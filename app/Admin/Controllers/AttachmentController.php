@@ -13,7 +13,7 @@ class AttachmentController extends Controller
     const ATTACHMENT_PATH = 'uploads/image/';
 
     # 上传文件大小
-    const FILE_LIMIT = 4096000;
+    const FILE_LIMIT = 10240000;
 
 
     public function store(Request $request)
@@ -67,8 +67,12 @@ class AttachmentController extends Controller
 
     }
 
-    public function destory(Request $request , $id)
+    public function destroy(Request $request , $id)
     {
+        return json_encode([
+            'msg'  => '文件删除成功',
+            'code' => 200,
+        ]);
         $data    = $request->all();
         $del_url = preg_replace("/[\/|\\\]storage/",'',$data['del_url']);
 

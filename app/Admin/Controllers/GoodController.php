@@ -3,10 +3,12 @@
 namespace App\Admin\Controllers;
 
 use App\Models\Good;
+use App\Models\GoodImage;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Storage;
 use Encore\Admin\Facades\Admin;
+use Illuminate\Support\Facades\Log;
 
 
 /**
@@ -17,8 +19,6 @@ class GoodController extends Controller
 {
     //首页
     public function index(Request $request){
-
-//        dd(Good::find(1)->category);
 
         $gd = new Good();
         $goods = $gd->get_data();
@@ -48,21 +48,13 @@ class GoodController extends Controller
             'size_desc'
         ]);
 
+        if(is_null($request->post('show_comment'))){
+            $insert_data['show_comment'] = 0;
+        }
+
         $pay_types = json_encode($request->post('pay_types'));
 
-        $main_image_file = $request->file('main_image_file');
-
-        $list_image_files = $request->file('list_image_files');
-
-        $main_video_file = $request->file('main_video_file');
-
-        if($main_image_file){
-            $main_image_url = $this->upload($main_image_file);
-        }
-
-        if($main_video_file){
-            $main_video_url = $this->upload($main_image_file);
-        }
+        list($main_image_url, $main_video_url, $list_image_urls) = $this->upload_file($request);
 
         //添加商品
         $mod = Good::create(array_merge(
@@ -75,16 +67,7 @@ class GoodController extends Controller
             ]
         ));
 
-        //加轮播图
-        if($list_image_files && count($list_image_files) > 0){
-            $list_image_urls = [];
-            foreach ($list_image_files as $list_image_file){
-                $url = $this->upload($list_image_file);
-                if($url){
-                    array_push($list_image_urls,['image_url' => $url]);
-                }
-            }
-
+        if($mod && count($list_image_urls)){
             $result = $mod->list_images()->createMany($list_image_urls);
         }
 
@@ -96,14 +79,78 @@ class GoodController extends Controller
 
     }
 
-    //编辑
+    //编辑保存
     public function update(Request $request, $id){
+
+        $gd = Good::find($id);
+        if(!$gd){
+            return redirect(route('goods.index'))->with('error', '商品不存在');
+        }
+
+        $update_data = $request->only([
+            'title',
+            'name',
+            'original_price',
+            'price',
+            'product_id',
+            'product_name',
+            'category_id',
+            'show_comment',
+            'detail_desc',
+            'size_desc'
+        ]);
+
+        if(is_null($request->post('show_comment'))){
+            $update_data['show_comment'] = 0;
+        }
+
+        $pay_types = json_encode($request->post('pay_types'));
+
+        $update_data = collect($update_data)->merge(['pay_types' => $pay_types]);
+
+        list($main_image_url, $main_video_url, $list_image_urls) = $this->upload_file($request);
+
+        if($main_image_url){
+            $update_data = collect($update_data)->merge(['main_image_url' => $main_image_url]);
+        }
+
+        if($main_video_url){
+           $update_data = collect($update_data)->merge(['main_video_url' => $main_video_url]);
+        }
+
+        $result = Good::where('id', $id)->update($update_data->all());
+
+        if($result){
+            if(count($list_image_urls) >0){
+                //删除原来的
+                GoodImage::where('good_id',$id)->delete();
+                //添加新的
+                $gd->list_images()->createMany($list_image_urls);
+            }
+            return redirect(route('goods.index'))->with('success', '更新成功');
+        }else{
+            return redirect(route('goods.index'))->with('error', '更新失败');
+        }
+
 
     }
 
-    //详情
-    public function show(Request $request, $id){
+    //编辑请求
+    public function edit(Request $request, $id){
 
+        $detail = Good::find($id);
+        $list_images = $detail->list_images;
+
+        $list_image_urls = '';
+        if($list_images->count() >0){
+            $list_image_urls = $list_images->map(function($item){
+                return asset('storage/'.$item->image_url);
+            });
+
+            $list_image_urls = str_replace(['[',']'], '', json_encode($list_image_urls));
+        }
+
+        return view('admin.good.edit', compact('detail','list_image_urls'));
     }
 
     //删除
@@ -111,32 +158,67 @@ class GoodController extends Controller
 
     }
 
+    /**
+     * @param $request
+     * @return array
+     */
+    public function upload_file($request){
+
+        $main_image_file = $request->file('main_image_file');
+
+        $list_image_files = $request->file('list_image_files');
+
+        $main_video_file = $request->file('main_video_file');
+
+        $main_image_url = $main_image_file ? $this->upload($main_image_file) : null;
+
+        $main_video_url = $main_video_file ? $this->upload($main_video_file) : null ;
+
+        //加轮播图
+        $list_image_urls = [];
+        if($list_image_files && count($list_image_files) > 0){
+            foreach ($list_image_files as $list_image_file){
+                $url = $this->upload($list_image_file);
+                if($url){
+                    array_push($list_image_urls,['image_url' => $url]);
+                }
+            }
+        }
+
+        return [$main_image_url, $main_video_url, $list_image_urls];
+
+    }
+
+    //do upload
     protected function upload($file){
 
         # 允许上传的扩展名
         $allow_extensions = ['jpg','jpeg','png','gif','mp4'];
-        $allow_extensions_str = implode(',',$allow_extensions);
 
-        if(!$file->isValid())
-        {
-            admin_error('文件无效,附件上传失败,请联系管理员');
-        }
+//        if(!$file->isValid())
+//        {
+//            admin_error('文件无效,附件上传失败,请联系管理员');
+//        }
 
         # 扩展名
-        $extension = pathinfo($file->getClientOriginalName(),PATHINFO_EXTENSION);
+        $extension = $file->extension();
+
+        Log::info($extension);
 
         if(!in_array(strtolower($extension), $allow_extensions))
         {
-            admin_error('只允许上传指定格式文件ext:'.$allow_extensions_str);
+            session()->flash('error','文件类型不正确,当前文件后缀:'.$extension);
+            return false;
         }
 
-//        # 文件大小
-//        $file_size = $file->getClientSize();
-//
-//        if($file_size > AttachmentController::FILE_LIMIT)
-//        {
-//            admin_error('超过文件大小限制4MB');
-//        }
+        # 文件大小
+        $file_size = $file->getClientSize();
+
+        if($file_size > AttachmentController::FILE_LIMIT)
+        {
+            session()->flash('error','超过文件大小限制10MB');
+            return false;
+        }
 
         $doc_path = AttachmentController::ATTACHMENT_PATH.date('Y').'/'.date('m').'/'.date('d');
 

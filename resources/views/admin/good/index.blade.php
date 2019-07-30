@@ -97,7 +97,7 @@
                         <div class="box-tools pull-right">
                         </div><!-- /.box-tools -->
                         <div class="box-body" style="display: block;">
-                            共11条
+                            共 {{$goods->total()}}条
                         </div><!-- /.box-body -->
                     </div>
 
@@ -153,16 +153,34 @@
                                     <td>{{$good->created_at}}</td>
                                     <td>{{$good->username}}</td>
                                     <td>
+
                                         <div class="grid-dropdown-actions dropdown">
                                             <a href="#" style="padding: 0 10px;" class="dropdown-toggle" data-toggle="dropdown">
                                                 <i class="fa fa-ellipsis-v"></i>
                                             </a>
                                             <ul class="dropdown-menu" style="min-width: 50px !important;box-shadow: 0 2px 3px 0 rgba(0,0,0,.2);border-radius:0;left: -65px;top: 5px;">
 
-                                                <li><a href="" class="grid-row-action">编辑</a></li>
-                                                <li><a href="" class="grid-row-action">删除</a></li>
+                                                <li><a class="grid-row-action" data-toggle="modal" data-target="#editModal" data-remote="{{route('goods.edit',['id' => $good->id])}}">编辑</a></li>
+                                                <li><a href="" class="grid-row-action">禁用</a></li>
 
                                             </ul>
+                                        </div>
+
+                                        <!-- 模态框（Modal） -->
+                                        <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" style="width:100%">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                        <h4 class="modal-title" id="myModalLabel"></h4>
+                                                    </div>
+                                                    <div class="modal-body"></div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                                        <button type="button" class="btn btn-primary">提交更改</button>
+                                                    </div>
+                                                </div><!-- /.modal-content -->
+                                            </div><!-- /.modal -->
                                         </div>
                                     </td>
                                 </tr>

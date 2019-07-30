@@ -280,6 +280,7 @@
             // });
 
             $("#list_image_files").fileinput({
+                "initialPreview" :[],
                 "overwriteInitial": false,
                 "initialPreviewAsData": true,
                 "browseLabel": "\u6d4f\u89c8",
