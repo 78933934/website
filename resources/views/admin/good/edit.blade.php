@@ -11,7 +11,7 @@
 
             <div class="form-group  ">
 
-                <label for="title" class="col-sm-2 asterisk control-label">网页标题名</label>
+                <label for="title" class="col-sm-2 asterisk control-label">单品展示名</label>
 
                 <div class="col-sm-8">
 
@@ -111,8 +111,8 @@
                 <div class="col-sm-8">
 
                     <select class="form-control single_select" style="width: 100%;" name="pay_types[]" multiple="multiple" required="1" >
-                        <option value="pay_arrived" selected>货到付款</option>
-                        <option value="paypal" selected>paypal支付</option>
+                        <option value="pay_arrived" @if(in_array('pay_arrived',$detail->pay_types))selected @endif>货到付款</option>
+                        <option value="paypal" @if(in_array('paypal',$detail->pay_types))selected @endif>paypal支付</option>
                     </select>
                     <input type="hidden" name="pay_types[]" />
                 </div>

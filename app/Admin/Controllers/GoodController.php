@@ -2,10 +2,12 @@
 
 namespace App\Admin\Controllers;
 
+use App\Exports\GoodsExport;
 use App\Models\Good;
 use App\Models\GoodImage;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Excel;
 use Storage;
 use Encore\Admin\Facades\Admin;
 use Illuminate\Support\Facades\Log;
@@ -21,9 +23,9 @@ class GoodController extends Controller
     public function index(Request $request){
 
         $gd = new Good();
-        $goods = $gd->get_data();
+        list($goods, $search) = $gd->get_data($request);
 
-        return view('admin.good.index',compact('goods'));
+        return view('admin.good.index',compact('goods','search'));
     }
 
     //新增页面
@@ -153,9 +155,37 @@ class GoodController extends Controller
         return view('admin.good.edit', compact('detail','list_image_urls'));
     }
 
-    //删除
-    public function destory(Request $request, $id){
+    //删除 禁用
+    public function destroy(Request $request, $id){
 
+        $gd = Good::withTrashed()
+            ->where('id', $id)
+            ->first();
+
+        $action = $request->post('action');
+
+        switch ($action){
+            case 'disable':
+                $res = $gd->delete();
+                $tips = '禁用';
+                break;
+            case 'enable':
+
+                //软删除
+                if($gd->trashed()){
+                    $res = $gd->restore();
+                    $tips = '启用';
+                }
+
+                break;
+
+            default:
+                return response()->json(['success'=>false,'msg' => '参数不正确']);
+        }
+
+        $msg = $res ? '成功':'失败';
+
+        return response()->json(['success' => $res, 'msg' => $tips.$msg ]);
     }
 
     /**
@@ -189,6 +219,18 @@ class GoodController extends Controller
 
     }
 
+    /**
+     * 商品导出
+     * @param Request $request
+     */
+    public function export(Request $request){
+
+        $gd = new Good();
+        $data = $gd->export($request);
+
+        return Excel::download(new GoodsExport($data), '商品导出'.date('y-m-d H_i_s').'.xlsx');
+    }
+
     //do upload
     protected function upload($file){
 
@@ -202,8 +244,6 @@ class GoodController extends Controller
 
         # 扩展名
         $extension = $file->extension();
-
-        Log::info($extension);
 
         if(!in_array(strtolower($extension), $allow_extensions))
         {

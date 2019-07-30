@@ -3,7 +3,7 @@
 
     <section class="content-header">
         <h1>
-            创建商品
+            发布商品
         </h1>
 
         <!-- breadcrumb start -->
@@ -34,7 +34,7 @@
 
                                 <div class="form-group  ">
 
-                                    <label for="title" class="col-sm-2 asterisk control-label">网页标题名</label>
+                                    <label for="title" class="col-sm-2 asterisk control-label">单品展示名</label>
 
                                     <div class="col-sm-8">
 
