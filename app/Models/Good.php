@@ -54,6 +54,17 @@ class Good extends Model
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function attributes(){
+        return $this->hasMany(GoodAttribute::class);
+    }
+
+    public function skus(){
+        return $this->hasMany(GoodSku::class);
+    }
+
+    /**
      * 列表数据
      * @param $request
      * @return array
@@ -141,6 +152,11 @@ class Good extends Model
     {
         return json_decode($value);
     }
+
+//    public function setMainImageUrlAttribute($value)
+//    {
+//        $this->attributes['main_image_url'] = asset('storage/'.$value);
+//    }
 
     /**
      * @param $request

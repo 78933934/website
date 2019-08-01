@@ -2,7 +2,10 @@
 
 namespace App\Admin\Controllers;
 
+use App\Events\BindGoodAttributeEvent;
 use App\Exports\GoodsExport;
+use App\Http\Requests\StoreGood;
+use App\Http\Requests\UpdateGood;
 use App\Models\Good;
 use App\Models\GoodImage;
 use Illuminate\Http\Request;
@@ -35,7 +38,7 @@ class GoodController extends Controller
     }
 
     //新增
-    public function store(Request $request){
+    public function store(StoreGood $request){
 
         $insert_data = $request->only([
             'title',
@@ -74,6 +77,10 @@ class GoodController extends Controller
         }
 
         if($mod){
+
+            //绑定默认属性
+            event(new BindGoodAttributeEvent($mod));
+
             return redirect(route('goods.index'))->with('success','添加成功');
         }else{
             return redirect(route('goods.index'))->with('error','添加失败');
@@ -82,7 +89,7 @@ class GoodController extends Controller
     }
 
     //编辑保存
-    public function update(Request $request, $id){
+    public function update(UpdateGood $request, $id){
 
         $gd = Good::find($id);
         if(!$gd){
@@ -262,7 +269,7 @@ class GoodController extends Controller
 
         $doc_path = AttachmentController::ATTACHMENT_PATH.date('Y').'/'.date('m').'/'.date('d');
 
-        $filename = md5(time()).'.'.$extension;
+        $filename = md5(time().rand(0,100)).'.'.$extension;
 
         Storage::makeDirectory($doc_path);
 

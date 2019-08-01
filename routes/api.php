@@ -20,9 +20,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', function ($api) {
-    $api->group(['middleware' => 'auth:api'], function ($api) {
-
-    });
+//    $api->group(['middleware' => 'auth:api'], function ($api) {
+//
+//    });
 
     /**前台**/
     $api->group([
@@ -30,6 +30,15 @@ $api->version('v1', function ($api) {
         'namespace' => 'App\Http\Controllers\User',
     ], function ($api) {
 
+        $api->group([
+            'middleware' => [
+//                'session'
+            ],
+        ], function ($api) {
+            //商品详情
+            $api->get('/goods/{id}', 'GoodController@show')->name('user_good.show');
+
+        });
     });
 
 

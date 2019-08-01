@@ -207,7 +207,7 @@
                             @foreach($goods as $good)
                                 <tr>
                                     <td>{{$good->id}}</td>
-                                    <td>
+                                    <td style="width: 80px;">
                                         <div style="width: 70px;"
                                              title="{{$good->title}}"
                                              data-container="body"
@@ -220,8 +220,10 @@
                                             <img src='{{asset('storage/'.$good->main_image_url)}}' class='thumbnail' width="60px" height="60px" />
                                         </div>
                                     </td>
-                                    <td>{{$good->title}}</td>
                                     <td>{{$good->name}}</td>
+                                    <td style="width:300px; word-break:break-all; word-wrap:break-word; white-space:inherit">
+                                        {{$good->title}}
+                                    </td>
                                     <td>{{$good->price}}</td>
 
                                     <td>{{$good->created_at}}</td>
@@ -245,6 +247,7 @@
 
                                                 @if(!$good->deleted_at)
                                                 <li><a class="grid-row-action" data-toggle="modal" data-target="#editModal" data-remote="{{route('goods.edit',['id' => $good->id])}}">编辑</a></li>
+                                                <li><a class="grid-row-action" data-toggle="modal" data-target="#SetAttributeModal">属性设置</a></li>
                                                 <li><a href="#" id ="disable_{{$good->id}}" data-id="{{$good->id}}" data-title="禁用" data-action="disable" class="grid-row-action">禁用</a></li>
                                                 @else
                                                     <li><a href="#" id ="enable_{{$good->id}}" data-id="{{$good->id}}" data-title="启用" data-action="enable" class="grid-row-action">启用</a></li>
@@ -265,6 +268,50 @@
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
                                                         <button type="button" class="btn btn-primary">提交更改</button>
+                                                    </div>
+                                                </div><!-- /.modal-content -->
+                                            </div><!-- /.modal -->
+                                        </div>
+
+                                        <!-- 模态框（Modal） -->
+                                        <div class="modal fade" id="SetAttributeModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" style="width:50%;">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                        <h4 class="modal-title" id="myModalLabel">配置属性</h4>
+                                                    </div>
+                                                    <div class="modal-body">
+
+                                                        @foreach($good->skus as $sku)
+                                                        <div class="form-group">
+                                                            <label for="title" class="col-sm-2 control-label">{{$good->name}}</label>
+                                                            <div class="col-sm-8">
+                                                                <div class="col-sm-5">
+                                                                    @if($sku->s1_name)
+                                                                        {{$sku->s1_name}}
+                                                                    @endif
+                                                                    @if($sku->s2_name)
+                                                                        /{{$sku->s2_name}}
+                                                                    @endif
+                                                                    @if($sku->s3_name)
+                                                                        /{{$s3_name}}
+                                                                    @endif
+                                                                </div>
+                                                                <div class="col-md-3">
+                                                                    @if($sku->disabled_at)
+                                                                        <a id="hidden_{{$sku->id}}" data-action="showing" data-id="{{$sku->id}}" style="color: green">启用</a>
+                                                                    @else
+                                                                        <a id="hidden_{{$sku->id}}" data-action="hidden" data-id="{{$sku->id}}">隐藏</a>
+                                                                    @endif
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                            <br/>
+                                                        @endforeach
+                                                    </div>
+                                                    <div class="modal-footer">
+
                                                     </div>
                                                 </div><!-- /.modal-content -->
                                             </div><!-- /.modal -->
@@ -379,6 +426,60 @@
                 }
             });
         })
+
+
+        //隐藏sku
+        $("a[id*=hidden_]").click(function(){
+            var action = $(this).data('action');
+            var title = action == 'hidden' ? '隐藏' : '启用';
+            var id = $(this).data('id');
+            swal({
+                title: "确认要" + title + "吗?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "确认",
+                showLoaderOnConfirm: true,
+                cancelButtonText: "取消",
+                preConfirm: function() {
+                    return new Promise(function(resolve) {
+                        $.ajax({
+                            method: 'post',
+                            url: '/admin/good_skus/' +id,
+                            data: {
+                                _method:'put',
+                                _token:"{{csrf_token()}}",
+                                action : action,
+                            },
+                            success: function (data,id) {
+                                //异步修改数据
+                                // console.log(data);
+                                resolve(data,id);
+                            }
+                        });
+                    });
+                }
+            }).then(function(data,id) {
+                console.log(data,id);
+                var result = data.value;
+                if (typeof result === 'object') {
+                    if (result.success) {
+                        swal(result.msg, '', 'success').then(function(msg){
+                            console.log(msg);
+                            if(msg.value == true){
+                                // window.location.reload();
+                                $("#hidden_" + id).text('ok');
+                            }
+                        });
+
+                    } else {
+                        swal(result.msg, '', 'error');
+                    }
+                }
+            });
+        })
+
+
 
         $(".grid-per-pager").on('change', function(e){
             $("#select_per_page").val($(this).val());

@@ -19,5 +19,9 @@ Route::group([
     $router->resource('/goods','GoodController')->except(['show']);
     //商品导出
     $router->get('/goods/export', 'GoodController@export')->name('goods.export');
+    //属性设置
+    $router->resource('/good_skus', 'GoodSkuController')->only(['update']);
+
+
 
 });

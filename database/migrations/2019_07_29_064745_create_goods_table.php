@@ -31,6 +31,12 @@ class CreateGoodsTable extends Migration
             $table->string('main_video_url',255)->nullable()->comment('封面视频');
             $table->dateTime('deleted_at')->nullable()->comment('禁用');
             $table->timestamps();
+
+            $table->unique('name');
+            $table->index('title');
+            $table->index('admin_user_id');
+            $table->index('product_id');
+            $table->index('category_id');
         });
     }
 

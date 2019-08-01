@@ -21,7 +21,11 @@ class EventServiceProvider extends ServiceProvider
 
         'Illuminate\Database\Events\QueryExecuted' => [
             'App\Listeners\QueryListener',
-        ]
+        ],
+
+        'App\Events\BindGoodAttributeEvent' => [
+            'App\Listeners\BindGoodAttributeListener',
+        ],
     ];
 
     /**
