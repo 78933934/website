@@ -276,7 +276,7 @@ class GoodController extends Controller
         $result = Storage::disk('public')->putFileAs($doc_path, $file, $filename);
 
         # 保存文件并, 路径,
-        return $result ? $result : false;
+        return $result ? asset('storage/'.$result) : false;
     }
 
 }

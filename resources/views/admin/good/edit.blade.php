@@ -220,7 +220,7 @@
 
             $(".main_image_file").fileinput({
                 "initialPreview" :[
-                    '{{asset('storage/'. $detail->main_image_url)}}',
+                    '{{ $detail->main_image_url}}',
                 ],
                 "overwriteInitial": true,
                 "initialPreviewAsData": true,
@@ -288,7 +288,7 @@
 
                 @if($detail->main_video_url)
                 "initialPreview" :[
-                    '{{asset('storage/'. $detail->main_video_url)}}',
+                    '{{$detail->main_video_url}}',
                 ],
                 initialPreviewConfig: [
                     {type: "video", filetype: "video/mp4", caption: "", url: "", key: 15},

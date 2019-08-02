@@ -215,9 +215,9 @@
                                              data-placement="right"
                                              data-trigger="hover"
                                              data-html="true"
-                                             data-content="<img src='{{asset('storage/'.$good->main_image_url)}}' class='thumbnail' width='260px' height='260px'  />"
+                                             data-content="<img src='{{$good->main_image_url}}' class='thumbnail' width='260px' height='260px'  />"
                                         >
-                                            <img src='{{asset('storage/'.$good->main_image_url)}}' class='thumbnail' width="60px" height="60px" />
+                                            <img src='{{$good->main_image_url}}' class='thumbnail' width="60px" height="60px" />
                                         </div>
                                     </td>
                                     <td>{{$good->name}}</td>
