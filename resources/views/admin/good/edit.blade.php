@@ -341,7 +341,7 @@
             });
 
             //编辑器
-            KindEditor.create('textarea[name="detail_desc"]',{
+            KindEditor.create('textarea[name="detail_desc"]，textarea[name="size_desc"]',{
                 width : '100%',   //宽度
                 height : '320px',   //高度
                 resizeType : '0',   //禁止拖动
@@ -355,6 +355,7 @@
                 },
                 formatUploadUrl: true,   //自动格式化上传后的URL
                 autoHeightMode: false,   //开启自动高度模式
+                allowImageRemote: false,
                 afterBlur: function () { this.sync(); }   //同步编辑器数据
             });
 
@@ -372,6 +373,7 @@
                 },
                 formatUploadUrl: true,   //自动格式化上传后的URL
                 autoHeightMode: false,   //开启自动高度模式
+                allowImageRemote: false,
                 afterBlur: function () { this.sync(); }   //同步编辑器数据
             });
         });

@@ -2,15 +2,13 @@
 @section('content')
     <section class="content-header">
         <h1>
-            商品管理
+            订单管理
         </h1>
     </section>
     <section class="content">
 
         <style>
-            .operate_account{
-                cursor:pointer;
-            }
+            .popover{ max-width:500px;}
         </style>
         @if (count($errors) > 0)
             <div class="alert alert-danger">
@@ -34,7 +32,7 @@
         <div class="row"><div class="col-md-12"><div class="box">
 
                     <div class="box-header with-border " id="filter-box">
-                        <form action="{{route('goods.index')}}" class="form-horizontal" method="get" id="fm">
+                        <form action="{{route('good_orders.index')}}" class="form-horizontal" method="get" id="fm">
 
                             <div class="row">
                                 <div>
@@ -57,23 +55,13 @@
                                                     </div>
                                                 </div>
 
-                                                <label class="col-sm-1 control-label">单品类型</label>
+                                                <label class="col-sm-1 control-label">状态</label>
                                                 <div class="col-sm-2">
-                                                    <select class="form-control status" name="category_id">
+                                                    <select class="form-control status" name="status">
                                                         <option></option>
-                                                        <option value="1">类型1</option>
-                                                        <option value="2">类型2</option>
-
-                                                    </select>
-                                                </div>
-
-                                                <label class="col-sm-1 control-label">产品名称</label>
-                                                <div class="col-sm-2">
-                                                    <select class="form-control status" name="product_id">
-                                                        <option></option>
-                                                        <option value="1">产品1</option>
-                                                        <option value="2">产品2</option>
-
+                                                        @foreach($status as $k=>$s)
+                                                            <option value="{{$k}}" @if(!is_null($search['status']) && $search['status'] == $k)selected @endif>{{$s}}</option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
 
@@ -98,18 +86,11 @@
                                                             <i class="fa fa-pencil"></i>
                                                         </div>
 
-                                                        <input type="text" class="form-control keywords" placeholder="单品名/单品展示名" name="keywords" value="{{$search['keywords']}}">
+                                                        <input type="text" class="form-control keywords" placeholder="订单号" name="keywords" value="{{$search['keywords']}}">
                                                     </div>
                                                 </div>
 
-                                                <label class="col-sm-1 control-label">状态</label>
-                                                <div class="col-sm-2">
-                                                    <select class="form-control status" name="status">
-                                                        <option></option>
-                                                        <option value="1" @if($search['status'] == 1)selected @endif>启用</option>
-                                                        <option value="2" @if($search['status'] == 2)selected @endif>禁用</option>
-                                                    </select>
-                                                </div>
+
 
                                             </div>
 
@@ -131,7 +112,7 @@
                                                             class="fa fa-search"></i>&nbsp;&nbsp;搜索</button>
                                             </div>
                                             <div class="btn-group pull-left " style="margin-left: 10px;">
-                                                <a href="{{route('goods.index')}}" class="btn btn-default btn-sm"><i
+                                                <a href="{{route('good_orders.index')}}" class="btn btn-default btn-sm"><i
                                                             class="fa fa-undo"></i>&nbsp;&nbsp;重置</a>
                                             </div>
                                         </div>
@@ -141,11 +122,7 @@
 
                         </form>
                         <div class="pull-right">
-                            <div class="btn-group pull-right grid-create-btn" style="margin-right: 10px">
-                                <a href="{{route('goods.create')}}" class="btn btn-sm btn-success" title="新增">
-                                    <i class="fa fa-plus"></i><span class="hidden-xs">&nbsp;&nbsp;发布</span>
-                                </a>
-                            </div>
+
                             &nbsp;&nbsp;&nbsp;
                             <div class="btn-group pull-right" style="margin-right: 10px">
                                 <a class="btn btn-sm btn-twitter" title="导出" href="{{route('goods.export')}}"><i class="fa fa-download"></i>
@@ -160,7 +137,7 @@
                         <div class="box-tools pull-right">
                         </div><!-- /.box-tools -->
                         <div class="box-body" style="display: block;">
-                            共 {{$goods->total()}}条
+                            共 {{$orders->total()}}条
                         </div><!-- /.box-body -->
                     </div>
 
@@ -173,29 +150,43 @@
                                     ID
                                 </th>
                                 <th>
-                                    封面主图
+                                    订单号
                                 </th>
                                 <th>
-                                    单品名
+                                    下单IP
                                 </th>
                                 <th>
-                                    单品展示名
-                                </th>
-                                <th>
-                                    单品价格
+                                    下单总价
                                 </th>
 
                                 <th>
-                                    发布时间
+                                    订单状态
                                 </th>
                                 <th>
-                                    发布人
+                                    下单时间
                                 </th>
 
                                 <th>
-                                    状态
+                                    收货人信息
                                 </th>
 
+                                <th>
+                                    收货人地址
+                                </th>
+
+                                <th>
+                                    留言
+                                </th>
+                                <th>
+                                    SKU信息
+                                </th>
+
+                                <th>
+                                    审核时间
+                                </th>
+                                <th>
+                                    审核人
+                                </th>
                                 <th>
                                     操作
                                 </th>
@@ -204,116 +195,138 @@
 
                             <tbody>
 
-                            @foreach($goods as $good)
+                            @foreach($orders as $order)
                                 <tr>
-                                    <td>{{$good->id}}</td>
-                                    <td style="width: 80px;">
-                                        <div style="width: 70px;"
-                                             title="{{$good->title}}"
+                                    <td>{{$order->id}}</td>
+                                    <td>{{$order->sn}}</td>
+                                    <td>{{$order->ip}}</td>
+                                    <td>{{$order->price}}</td>
+                                    <td>
+                                        <span style="color: @if($order->status == 1)green @else red @endif "
+                                              title="审核记录"
+                                              data-container="body"
+                                              data-toggle="popover"
+                                              data-placement="right"
+                                              data-trigger="hover"
+                                              data-html="true"
+                                              data-content="<table style='width:400px;' class='table'><tr><th>审核时间</th><th>审核人</th><th>审核信息</th></tr>
+                                                    @foreach($order->audit_logs as $audit_log)
+                                                      <tr><td>{{$audit_log->created_at}}</td><td>{{$audit_log->admin_user->username}}</td><td>{{$audit_log->remark}}</td></tr>
+                                                    @endforeach
+                                              </table>"
+                                        >
+                                        {{array_get($status, $order->status) }}
+                                        </span>
+                                    </td>
+                                    <td style="width:6%; word-break:break-all; word-wrap:break-word; white-space:inherit">
+                                        {{$order->created_at}}
+                                    </td>
+                                    <td>
+                                        {{$order->receiver_name}}<br />
+                                        {{$order->receiver_phone}}<br />
+                                        {{$order->receiver_email}}
+                                    </td>
+                                    <td style="width:15%; word-break:break-all; word-wrap:break-word; white-space:inherit">
+                                        {{$order->address}}<br />
+                                        {{$order->short_address}}
+                                    </td>
+                                    <td>
+                                        <span style="width: 70px;"
+                                             title=""
                                              data-container="body"
                                              data-toggle="popover"
                                              data-placement="right"
                                              data-trigger="hover"
-                                             data-html="true"
-                                             data-content="<img src='{{$good->main_image_url}}' class='thumbnail' width='260px' height='260px'  />"
+                                             data-content="{{$order->leave_word}}"
                                         >
-                                            <img src='{{$good->main_image_url}}' class='thumbnail' width="60px" height="60px" />
-                                        </div>
+                                            @if($order->leave_word)<a style="color: #0d6aad">查看</a>@endif
+                                        </span>
+
                                     </td>
-                                    <td>{{$good->name}}</td>
-                                    <td style="width:300px; word-break:break-all; word-wrap:break-word; white-space:inherit">
-                                        {{$good->title}}
+                                    <td style="width:15%; word-break:break-all; word-wrap:break-word; white-space:inherit">
+                                        @foreach($order->order_skus as $order_sku)
+                                            @php($sku = $order_sku->sku_info)
+                                            <span>{{$sku->good->name. '-' .$sku->sku_id. ':' .$sku->s1_name.'/'.$sku->s2_name.'/'.$sku->s3_name. ' x'. $order_sku->sku_nums }}</span><br>
+                                        @endforeach
                                     </td>
-                                    <td>{{$good->price}}</td>
-
-                                    <td>{{$good->created_at}}</td>
-
-                                    <td>{{$good->username}}</td>
-
+                                    <td style="width:6%; word-break:break-all; word-wrap:break-word; white-space:inherit">
+                                        {{$order->last_audited_at}}
+                                    </td>
+                                    <td>{{$order->admin_user ? $order->admin_user->username : ''}}</td>
                                     <td>
-                                        @if($good->deleted_at)
-                                            <span style="color: red">已禁用</span>
-                                        @else
-                                            <span style="color: green">启用</span>
-                                        @endif
-                                    </td>
-                                    <td>
-
                                         <div class="grid-dropdown-actions dropdown">
                                             <a href="#" style="padding: 0 10px;" class="dropdown-toggle" data-toggle="dropdown">
                                                 <i class="fa fa-ellipsis-v"></i>
                                             </a>
                                             <ul class="dropdown-menu" style="min-width: 50px !important;box-shadow: 0 2px 3px 0 rgba(0,0,0,.2);border-radius:0;left: -65px;top: 5px;">
 
-                                                @if(!$good->deleted_at)
-                                                <li><a href="#" data-toggle="modal" data-target="#editModal" data-remote="{{route('goods.edit',['id' => $good->id])}}">编辑</a></li>
-                                                <li><a href="#" data-toggle="modal" data-target="#SetAttributeModal_{{$good->id}}">属性设置</a></li>
-                                                <li><a href="#" id ="disable_{{$good->id}}" data-id="{{$good->id}}" data-title="禁用" data-action="disable" class="grid-row-action">禁用</a></li>
-                                                @else
-                                                    <li><a href="#" id ="enable_{{$good->id}}" data-id="{{$good->id}}" data-title="启用" data-action="enable" class="grid-row-action">启用</a></li>
-                                                @endif
+                                                <li><a href="#" data-toggle="modal" data-target="#editModal" data-remote="{{route('good_orders.edit',['id' => $order->id])}}">编辑</a></li>
+                                                <li><a href="#" data-toggle="modal" data-target="#auditModal_{{$order->id}}">审核</a></li>
+                                                <li><a href="#" id ="disable_{{$order->id}}" data-id="{{$order->id}}" data-title="删除" data-action="disable" class="grid-row-action">删除</a></li>
 
                                             </ul>
                                         </div>
 
                                         <!-- 模态框（Modal） -->
-                                        <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog" style="width:100%">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                                        <h4 class="modal-title" id="myModalLabel"></h4>
-                                                    </div>
-                                                    <div class="modal-body"></div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                                                        <button type="button" class="btn btn-primary">提交更改</button>
-                                                    </div>
-                                                </div><!-- /.modal-content -->
-                                            </div><!-- /.modal -->
-                                        </div>
+                                        {{--<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">--}}
+                                            {{--<div class="modal-dialog" style="width:100%">--}}
+                                                {{--<div class="modal-content">--}}
+                                                    {{--<div class="modal-header">--}}
+                                                        {{--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>--}}
+                                                        {{--<h4 class="modal-title" id="myModalLabel"></h4>--}}
+                                                    {{--</div>--}}
+                                                    {{--<div class="modal-body"></div>--}}
+                                                    {{--<div class="modal-footer">--}}
+                                                        {{--<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>--}}
+                                                        {{--<button type="button" class="btn btn-primary">提交更改</button>--}}
+                                                    {{--</div>--}}
+                                                {{--</div><!-- /.modal-content -->--}}
+                                            {{--</div><!-- /.modal -->--}}
+                                        {{--</div>--}}
 
                                         <!-- 模态框（Modal） -->
-                                        <div class="modal fade" id="SetAttributeModal_{{$good->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                        <div class="modal fade" id="auditModal_{{$order->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                                             <div class="modal-dialog" style="width:50%;">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                                        <h4 class="modal-title" id="myModalLabel">配置属性</h4>
-                                                    </div>
-                                                    <div class="modal-body">
+                                                <form action="{{route('good_orders.audit',['id' => $order->id])}}" class="form-horizontal" method="post">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                            <h4 class="modal-title" id="myModalLabel">审核订单</h4>
+                                                        </div>
+                                                        <div class="modal-body">
 
-                                                        @foreach($good->skus as $sku)
-                                                        <div class="form-group">
-                                                            <label for="title" class="col-sm-6 control-label">{{'['. $sku->sku_id .'] ' .$good->name}}</label>
-                                                            <div class="col-sm-6">
-                                                                <div class="col-sm-5">
-                                                                    @if($sku->s1_name)
-                                                                        {{$sku->s1_name}}
-                                                                    @endif
-                                                                    @if($sku->s2_name)
-                                                                        /{{$sku->s2_name}}
-                                                                    @endif
-                                                                    @if($sku->s3_name)
-                                                                        /{{$s3_name}}
-                                                                    @endif
-                                                                </div>
-                                                                <div class="col-md-3">
-                                                                    @if($sku->disabled_at)
-                                                                        <a id="hidden_{{$sku->id}}" data-action="showing" data-id="{{$sku->id}}" style="color: green">启用</a>
-                                                                    @else
-                                                                        <a id="hidden_{{$sku->id}}" data-action="hidden" data-id="{{$sku->id}}">隐藏</a>
-                                                                    @endif
+                                                            <div class="row">
+                                                                <div class="form-group">
+                                                                    <label for="title" class="col-sm-2 asterisk control-label">选择状态</label>
+                                                                    <div class="col-sm-6">
+                                                                        <select class="status" name="status" style="width: 200px;" required="1">
+                                                                            <option></option>
+                                                                            @foreach($status as $key=>$s)
+                                                                                <option value="{{$key}}">{{$s}}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                            <br/>
-                                                        @endforeach
-                                                    </div>
-                                                    <div class="modal-footer">
+                                                            <br />
+                                                            <div class="row">
+                                                                <div class="form-group">
+                                                                    <label for="title" class="col-sm-2 asterisk control-label">填写审核信息</label>
+                                                                    <div class="col-sm-6">
+                                                                        <div><textarea cols="30" rows="3" name="remark" required="1"></textarea></div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
 
-                                                    </div>
-                                                </div><!-- /.modal-content -->
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <input type="hidden" name="_method" value="put" />
+                                                            <input type="hidden" name="_token" value="{{csrf_token()}}" />
+                                                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                                            <button type="submit" class="btn btn-primary">提交</button>
+                                                        </div>
+                                                    </div><!-- /.modal-content -->
+                                                </form>
                                             </div><!-- /.modal -->
                                         </div>
                                     </td>
@@ -331,7 +344,7 @@
 
                         <div class="pull-right">
                             <!-- Previous Page Link -->
-                            {{$goods->appends($search)->links()}}
+                            {{$orders->appends($search)->links()}}
                         </div>
 
                         <label class="control-label pull-right" style="margin-right: 10px;margin-top: 20px; font-weight: 100;">
@@ -394,7 +407,7 @@
                     return new Promise(function(resolve) {
                         $.ajax({
                             method: 'post',
-                            url: '/admin/goods/' +id,
+                            url: '/admin/good_orders/' +id,
                             data: {
                                 _method:'delete',
                                 _token:"{{csrf_token()}}",

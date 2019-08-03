@@ -194,7 +194,7 @@
                                         <input type="checkbox" name="show_comment" value="1" checked />
 
                                     </div>
-                                </div>$list_image_files
+                                </div>
 
                                 <div class="form-group  ">
 
@@ -376,7 +376,7 @@
             });
 
             //编辑器
-            KindEditor.create('textarea[name="detail_desc"]',{
+            KindEditor.create('textarea[name="detail_desc"],textarea[name="size_desc"]',{
                 width : '100%',   //宽度
                 height : '320px',   //高度
                 resizeType : '0',   //禁止拖动
@@ -390,25 +390,10 @@
                 },
                 formatUploadUrl: true,   //自动格式化上传后的URL
                 autoHeightMode: false,   //开启自动高度模式
+                allowImageRemote: false,
                 afterBlur: function () { this.sync(); }   //同步编辑器数据
             });
 
-            KindEditor.create('textarea[name="size_desc"]',{
-                width : '100%',   //宽度
-                height : '320px',   //高度
-                resizeType : '0',   //禁止拖动
-                allowFileManager : true,   //允许对上传图片进行管理
-                uploadJson :   '/yxx/kindeditor/upload', //文件上传地址
-                fileManagerJson : '/yxx/kindeditor/manager',   //文件管理地址
-                deleteUrl  : '/yxx/kindeditor/delete', //文件删除地址
-                //urlType : 'domain',   //带域名的路径
-                extraFileUploadParams: {
-                    '_token':"{{csrf_token()}}"
-                },
-                formatUploadUrl: true,   //自动格式化上传后的URL
-                autoHeightMode: false,   //开启自动高度模式
-                afterBlur: function () { this.sync(); }   //同步编辑器数据
-            });
         });
     </script>
 

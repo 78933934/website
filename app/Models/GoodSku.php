@@ -22,4 +22,12 @@ class GoodSku extends Model
         'disabled_at'
 
     ];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    function good(){
+       return $this->belongsTo(Good::class);
+    }
+
 }

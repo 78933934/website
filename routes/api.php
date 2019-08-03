@@ -36,7 +36,10 @@ $api->version('v1', function ($api) {
             ],
         ], function ($api) {
             //商品详情
-            $api->get('/goods/{id}', 'GoodController@show')->name('user_good.show');
+            $api->get('/goods/{id}', 'GoodController@show')->name('user.good.show');
+
+            //订单相关
+            $api->post('/good_orders', 'GoodOrderController@store')->name('user.order.store');
 
         });
     });

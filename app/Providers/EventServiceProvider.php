@@ -26,6 +26,11 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\BindGoodAttributeEvent' => [
             'App\Listeners\BindGoodAttributeListener',
         ],
+
+        //审核订单成功
+        'App\Events\AuditOrderSuccessEvent' => [
+            'App\Listeners\AuditOrderSuccessListener',
+        ],
     ];
 
     /**

@@ -165,6 +165,9 @@ class GoodController extends Controller
             $good->collection_id = $good->id;
         }
 
+        //货币符号
+        $good->money_sign = config('money_sign');
+
         unset($good->attributes);
 
         return compact('good');

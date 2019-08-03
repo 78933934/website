@@ -153,7 +153,7 @@ class GoodController extends Controller
         $list_image_urls = '';
         if($list_images->count() >0){
             $list_image_urls = $list_images->map(function($item){
-                return asset('storage/'.$item->image_url);
+                return $item->image_url;
             });
 
             $list_image_urls = str_replace(['[',']'], '', json_encode($list_image_urls));

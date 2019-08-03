@@ -49,6 +49,18 @@ class BindGoodAttributeListener
                 'price' => 300,
                 'stock' => 0
             ],
+            [
+                'sku_id' => 2001,
+                'attrs' => [['id'=>3,'name'=>'蓝'],['id'=>4,'name'=>'大']],
+                'price' => 300,
+                'stock' => 0
+            ],
+            [
+                'sku_id' => 3001,
+                'attrs' => [['id'=>3,'name'=>'蓝'],['id'=>5,'name'=>'小']],
+                'price' => 300,
+                'stock' => 0
+            ],
         ];
 
         foreach ($sku_datas as $sku_data){

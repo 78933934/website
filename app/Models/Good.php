@@ -153,11 +153,6 @@ class Good extends Model
         return json_decode($value);
     }
 
-//    public function setMainImageUrlAttribute($value)
-//    {
-//        $this->attributes['main_image_url'] = asset('storage/'.$value);
-//    }
-
     /**
      * @param $request
      * @return mixed

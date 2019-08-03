@@ -22,6 +22,11 @@ Route::group([
     //属性设置
     $router->resource('/good_skus', 'GoodSkuController')->only(['update']);
 
+    //订单管理
+    $router->resource('/good_orders', 'GoodOrderController')->except(['store']);
+    //审核订单
+    $router->put('/good_orders/{id}/audit','GoodOrderController@audit')->name('good_orders.audit');
+
 
 
 });

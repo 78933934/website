@@ -21,4 +21,22 @@ if (!function_exists('getSql')) {
     }
 }
 
+/**
+ * @生成order_sn
+ */
+if(!function_exists('generate_sn')){
+    function generate_sn(){
+        return date('Ymd').substr(implode(NULL, array_map('ord', str_split(substr(uniqid(), 7, 13), 1))), 0, 8);
+    }
+}
+
+/**
+ * @api返回json
+ */
+if(!function_exists('returned')){
+    function returned($success, $msg){
+        return response()->json(['success' => $success, 'msg' => $msg]);
+    }
+}
+
 ?>
