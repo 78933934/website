@@ -81,9 +81,9 @@ class GoodController extends Controller
             //绑定默认属性
             event(new BindGoodAttributeEvent($mod));
 
-            return redirect(route('goods.index'))->with('success','添加成功');
+            return redirect(route('goods.index'))->with('success', trans('common.create.success'));
         }else{
-            return redirect(route('goods.index'))->with('error','添加失败');
+            return redirect(route('goods.index'))->with('error', trans('common.create.fail'));
         }
 
     }
@@ -93,7 +93,7 @@ class GoodController extends Controller
 
         $gd = Good::find($id);
         if(!$gd){
-            return redirect(route('goods.index'))->with('error', '商品不存在');
+            return redirect(route('goods.index'))->with('error', trans('good.not_exist'));
         }
 
         $update_data = $request->only([
@@ -136,9 +136,9 @@ class GoodController extends Controller
                 //添加新的
                 $gd->list_images()->createMany($list_image_urls);
             }
-            return redirect(route('goods.index'))->with('success', '更新成功');
+            return redirect(route('goods.index'))->with('success', trans('common.update.success'));
         }else{
-            return redirect(route('goods.index'))->with('error', '更新失败');
+            return redirect(route('goods.index'))->with('error', trans('common.update.fail'));
         }
 
 

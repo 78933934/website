@@ -19,4 +19,8 @@ class GoodOrderSku extends Model
     public function sku_info(){
        return $this->hasOne(GoodSku::class, 'good_id', 'good_id')->where('sku_id',$this->sku_id);
     }
+
+    public function good(){
+        return $this->belongsTo(Good::class);
+    }
 }

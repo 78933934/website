@@ -12,6 +12,11 @@ return [
         GoodOrder::AUDIT_PASSED_TYPE => '审核通过',
         GoodOrder::AUDIT_REFUSED_TYPE => '审核拒绝'
     ],
+
+    'pay_types' => [
+        1 => '货到付款',
+        2 => '在线支付',
+    ],
 ];
 
 

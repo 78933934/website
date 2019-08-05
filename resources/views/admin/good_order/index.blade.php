@@ -125,7 +125,7 @@
 
                             &nbsp;&nbsp;&nbsp;
                             <div class="btn-group pull-right" style="margin-right: 10px">
-                                <a class="btn btn-sm btn-twitter" title="导出" href="{{route('goods.export')}}"><i class="fa fa-download"></i>
+                                <a class="btn btn-sm btn-twitter" title="导出" href="{{route('good_orders.export')}}"><i class="fa fa-download"></i>
                                     <span class="hidden-xs"> 导出</span></a>
                             </div>
 
@@ -198,7 +198,20 @@
                             @foreach($orders as $order)
                                 <tr>
                                     <td>{{$order->id}}</td>
-                                    <td>{{$order->sn}}</td>
+                                    <td style="width:10%; word-break:break-all; word-wrap:break-word; white-space:inherit">
+                                        {{$order->sn}}<br />
+
+                                        <a href="#"
+                                           title="客服备注"
+                                           id="update_remark_{{$order->id}}"
+                                           data-type="text"
+                                           data-pk="{{$order->id}}"
+                                           data-value="{{$order->remark}}"
+                                           data-url="/admin/good_orders/{{$order->id}}/update_remark"
+                                           data-title="客服备注">{{$order->remark ?: '+'}}
+                                        </a>
+
+                                    </td>
                                     <td>{{$order->ip}}</td>
                                     <td>{{$order->price}}</td>
                                     <td>
@@ -246,7 +259,7 @@
                                     <td style="width:15%; word-break:break-all; word-wrap:break-word; white-space:inherit">
                                         @foreach($order->order_skus as $order_sku)
                                             @php($sku = $order_sku->sku_info)
-                                            <span>{{$sku->good->name. '-' .$sku->sku_id. ':' .$sku->s1_name.'/'.$sku->s2_name.'/'.$sku->s3_name. ' x'. $order_sku->sku_nums }}</span><br>
+                                            <span>{{$sku->good->name. '-' .$sku->sku_id. ':' .$sku->s1_name.' '.$sku->s2_name.' '.$sku->s3_name. ' x'. $order_sku->sku_nums }}</span><br>
                                         @endforeach
                                     </td>
                                     <td style="width:6%; word-break:break-all; word-wrap:break-word; white-space:inherit">
@@ -268,21 +281,21 @@
                                         </div>
 
                                         <!-- 模态框（Modal） -->
-                                        {{--<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">--}}
-                                            {{--<div class="modal-dialog" style="width:100%">--}}
-                                                {{--<div class="modal-content">--}}
-                                                    {{--<div class="modal-header">--}}
-                                                        {{--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>--}}
-                                                        {{--<h4 class="modal-title" id="myModalLabel"></h4>--}}
-                                                    {{--</div>--}}
-                                                    {{--<div class="modal-body"></div>--}}
-                                                    {{--<div class="modal-footer">--}}
-                                                        {{--<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>--}}
-                                                        {{--<button type="button" class="btn btn-primary">提交更改</button>--}}
-                                                    {{--</div>--}}
-                                                {{--</div><!-- /.modal-content -->--}}
-                                            {{--</div><!-- /.modal -->--}}
-                                        {{--</div>--}}
+                                        <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" style="width:100%">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                        <h4 class="modal-title" id="myModalLabel"></h4>
+                                                    </div>
+                                                    <div class="modal-body"></div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                                        <button type="button" class="btn btn-primary">提交更改</button>
+                                                    </div>
+                                                </div><!-- /.modal-content -->
+                                            </div><!-- /.modal -->
+                                        </div>
 
                                         <!-- 模态框（Modal） -->
                                         <div class="modal fade" id="auditModal_{{$order->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -441,56 +454,36 @@
         })
 
 
-        //隐藏sku
-        $("a[id*=hidden_]").click(function(){
-            var action = $(this).data('action');
-            var title = action == 'hidden' ? '隐藏' : '启用';
-            var id = $(this).data('id');
-            swal({
-                title: "确认要" + title + "吗?",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#DD6B55",
-                confirmButtonText: "确认",
-                showLoaderOnConfirm: true,
-                cancelButtonText: "取消",
-                preConfirm: function() {
-                    return new Promise(function(resolve) {
-                        $.ajax({
-                            method: 'post',
-                            url: '/admin/good_skus/' +id,
-                            data: {
-                                _method:'put',
-                                _token:"{{csrf_token()}}",
-                                action : action,
-                            },
-                            success: function (data,id) {
-                                //异步修改数据
-                                // console.log(data);
-                                resolve(data,id);
-                            }
-                        });
-                    });
+        //加备注
+        $("a[id*='update_remark_']").editable({
+            value :'',
+            params: function(params) {
+                //originally params contain pk, name and value
+                params._method = 'put';
+                params._token = "{{csrf_token()}}";
+                return params;
+            },
+            success: function(response, newValue) {
+                console.log(response);
+                if(!response.success) {
+                    return response.msg; //msg will be shown in editable form
+                }else{
+                    //成功
+                    location.reload();
                 }
-            }).then(function(data,id) {
-                console.log(data,id);
-                var result = data.value;
-                if (typeof result === 'object') {
-                    if (result.success) {
-                        swal(result.msg, '', 'success').then(function(msg){
-                            console.log(msg);
-                            if(msg.value == true){
-                                // window.location.reload();
-                                $("#hidden_" + id).text('ok');
-                            }
-                        });
+            },
 
-                    } else {
-                        swal(result.msg, '', 'error');
-                    }
+            error: function(response, newValue) {
+                if(response.status === 500) {
+                    return '服务器内部错误,请联系管理员';
                 }
-            });
-        })
+                if(response.status == 403) {
+                    return  response.responseJSON.message
+                } else {
+                    return response.responseText;
+                }
+            },
+        });
 
 
 

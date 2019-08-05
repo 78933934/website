@@ -22,7 +22,8 @@ class GoodOrder extends Model
         'receiver_email',
         'address',
         'short_address',
-        'leave_word'
+        'leave_word',
+        'remark'
 
     ];
 
@@ -82,9 +83,12 @@ class GoodOrder extends Model
      */
     protected function query_conditions($base_query, $request){
 
+        //默认30天数据
+        list($start_date, $end_date) = recent_thirty_days();
+
         //筛选时间
-        $start_date = $request->get('start_date');
-        $end_date = $request->get('end_date');
+        $start_date = $request->get('start_date') ?: $start_date;
+        $end_date = $request->get('end_date') ?: $end_date;
         if($start_date && $end_date){
             $base_query->whereBetween('good_orders.created_at', [$start_date, Carbon::parse($end_date)->endOfDay()]);
         }
@@ -113,11 +117,68 @@ class GoodOrder extends Model
         return [$base_query, $search];
     }
 
+    public function export($request){
+
+        $base_query =  GoodOrder::with(['order_skus' => function($query){
+        },'admin_user']);
+
+        list($query, $search) = $this->query_conditions($base_query, $request);
+
+        $orders = $query->select(
+            'good_orders.id',
+            'good_orders.created_at',
+            'good_orders.last_audited_at',
+            'good_orders.sn',
+            'good_orders.price',
+            'good_orders.status',
+            'good_orders.pay_type_id',
+
+
+            'good_orders.receiver_name',
+            'good_orders.receiver_phone',
+            'good_orders.receiver_email',
+            'good_orders.address',
+            'good_orders.short_address',
+            'good_orders.leave_word',
+            'good_orders.remark'
+        )
+            ->orderBy('good_orders.id', 'desc')
+            ->get();
+
+        $pay_types = config('order.pay_types');
+        $status = config('order.status');
+
+        foreach ($orders as $order){
+            $order_skus = $order->order_skus;
+            $sku_str = '';
+            foreach ($order_skus as $order_sku){
+                $sku = $order_sku->sku_info;
+                $sku_str .= $sku->good->name .'-'. $sku->s1_name . $sku->s2_name. $sku->s3_name. 'x'. $order_sku->sku_nums;
+                $sku_str .= " \r\n ";
+            }
+            $order->status_str = array_get($status, $order->status, '');
+            $order->pay_type_str = array_get($pay_types, $order->pay_type_id, '');
+            $order->sku = $sku_str;
+            unset(
+                $order->id,
+                $order->pay_type_id,
+                $order->status
+            );
+        }
+
+        return $orders;
+
+    }
+
     /**
      * @param $value
      * @return string
      */
     public function getIpAttribute($value){
         return long2ip($value);
+    }
+
+    public function getPriceAttribute($value){
+        return config('money_sign').$value;
     }
 }

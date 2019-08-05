@@ -1,5 +1,6 @@
 <?php
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 if (!function_exists('getSql')) {
     function getSql ()
@@ -36,6 +37,15 @@ if(!function_exists('generate_sn')){
 if(!function_exists('returned')){
     function returned($success, $msg){
         return response()->json(['success' => $success, 'msg' => $msg]);
+    }
+}
+
+if(!function_exists('recent_thirty_days')){
+    function recent_thirty_days(){
+        $start_date = Carbon::parse(Carbon::now()->subDays(30))->startOfDay();
+        $end_date = Carbon::parse(Carbon::now())->endOfDay();
+
+        return [$start_date, $end_date];
     }
 }
 
