@@ -41,7 +41,7 @@
                                             <div class="form-group">
 
                                                 <label class="col-sm-1 control-label">
-                                                    发布时间
+                                                    下单时间
                                                 </label>
 
                                                 <div class="col-sm-3 date_type_start_end">
