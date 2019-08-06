@@ -74,20 +74,20 @@
                 </div>
             </div>
 
-            <div class="form-group">
+            {{--<div class="form-group">--}}
 
-                <label for="product_id" class="col-sm-2 asterisk control-label">选择产品</label>
+                {{--<label for="product_id" class="col-sm-2 asterisk control-label">选择产品</label>--}}
 
-                <div class="col-sm-8">
+                {{--<div class="col-sm-8">--}}
 
-                    <select class="form-control single_select" style="width: 100%;" name="product_id" required="1" >
-                        <option></option>
-                        <option value="1" @if($detail->product_id == 1)selected @endif>产品1</option>
-                        <option value="2" >产品2</option>
-                        <option value="3" >产品3</option>
-                    </select>
-                </div>
-            </div>
+                    {{--<select class="form-control single_select" style="width: 100%;" name="product_id" required="1" >--}}
+                        {{--<option></option>--}}
+                        {{--<option value="1" @if($detail->product_id == 1)selected @endif>产品1</option>--}}
+                        {{--<option value="2" >产品2</option>--}}
+                        {{--<option value="3" >产品3</option>--}}
+                    {{--</select>--}}
+                {{--</div>--}}
+            {{--</div>--}}
 
             <div class="form-group">
 
@@ -97,9 +97,24 @@
 
                     <select class="form-control single_select" style="width: 100%;" name="category_id" required="1" >
                         <option></option>
-                        <option value="1" @if($detail->category_id == 1)selected @endif>类型1</option>
-                        <option value="2" >类型2</option>
-                        <option value="3" >类型3</option>
+                        @foreach($good_categories as $key=>$category)
+                            <option value="{{$key}}" @if($detail->category_id == $key) selected @endif>{{$category}}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+
+                <label for="good_module_id" class="col-sm-2 control-label">所属模块</label>
+
+                <div class="col-sm-8">
+
+                    <select class="form-control single_select" style="width: 100%;" name="good_module_id">
+                        <option></option>
+                        @foreach($good_modules as $key=>$module)
+                            <option value="{{$key}}" @if($detail->good_module_id == $key) selected @endif>{{$module}}</option>
+                        @endforeach
                     </select>
                 </div>
             </div>

@@ -8,14 +8,27 @@
     <section class="content">
 
 
-        <div  class="box box-info box-solid" style="width: 50%">
+        <div  class="box box-info box-solid" style="width: 90%">
             <div class="box-header with-border">
                 <h3 class="box-title">统计信息</h3>
                 <div class="box-tools pull-right">
                 </div><!-- /.box-tools -->
             </div><!-- /.box-header -->
             <div class="box-body" style="display: block;">
-                共 100个商品 ; 订单数：99 单
+
+                <table class="table">
+                    <tr>
+                        <td>当前地区 : {{$global_area}} <a href="{{route('config.index')}}">&nbsp;&nbsp;[去设置]</a></td>
+                        <td>货币符号 : {{$money_sign}} <a href="{{route('config.index')}}">&nbsp;&nbsp;[去设置]</a></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>商品数 : <a href="{{route('goods.index')}}">{{$goods_count}} &nbsp;&nbsp;&nbsp;[发布商品]</a></td>
+                        <td>订单数 : <a href="{{route('good_orders.index')}}">{{$orders_count}} &nbsp;&nbsp;&nbsp;[查看订单]</a></td>
+                        <td>用户数 : <a href="{{route('admin.auth.users.index')}}">{{$admin_users_count}} &nbsp;&nbsp;&nbsp;[管理用户]</a></td>
+                    </tr>
+
+                </table>
             </div><!-- /.box-body -->
         </div>
 

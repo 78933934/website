@@ -7,7 +7,9 @@ use App\Exports\GoodsExport;
 use App\Http\Requests\StoreGood;
 use App\Http\Requests\UpdateGood;
 use App\Models\Good;
+use App\Models\GoodCategory;
 use App\Models\GoodImage;
+use App\Models\GoodModule;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Excel;
@@ -20,7 +22,7 @@ use Illuminate\Support\Facades\Log;
  * Class GoodController
  * @package App\Admin\Controllers
  */
-class GoodController extends Controller
+class GoodController extends BaseController
 {
     //首页
     public function index(Request $request){
@@ -48,6 +50,7 @@ class GoodController extends Controller
             'product_id',
             'product_name',
             'category_id',
+            'good_module_id',
             'show_comment',
             'detail_desc',
             'size_desc'
@@ -101,9 +104,10 @@ class GoodController extends Controller
             'name',
             'original_price',
             'price',
-            'product_id',
+//            'product_id',
             'product_name',
             'category_id',
+            'good_module_id',
             'show_comment',
             'detail_desc',
             'size_desc'

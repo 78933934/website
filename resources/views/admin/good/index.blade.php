@@ -61,8 +61,9 @@
                                                 <div class="col-sm-2">
                                                     <select class="form-control status" name="category_id">
                                                         <option></option>
-                                                        <option value="1">类型1</option>
-                                                        <option value="2">类型2</option>
+                                                        @foreach($good_categories as $key=>$category)
+                                                            <option value="{{$key}}" @if($search['category_id'] == $key) selected @endif>{{$category}}</option>
+                                                        @endforeach
 
                                                     </select>
                                                 </div>
@@ -92,7 +93,7 @@
                                                 <label class="col-sm-1 control-label">
                                                     关键词搜索
                                                 </label>
-                                                <div class="col-sm-6">
+                                                <div class="col-sm-3">
                                                     <div class="input-group input-group-sm">
                                                         <div class="input-group-addon">
                                                             <i class="fa fa-pencil"></i>
@@ -101,6 +102,17 @@
                                                         <input type="text" class="form-control keywords" placeholder="单品名/单品展示名" name="keywords" value="{{$search['keywords']}}">
                                                     </div>
                                                 </div>
+                                                <label class="col-sm-1 control-label">所属模块</label>
+                                                <div class="col-sm-2">
+                                                    <select class="form-control status" name="good_module_id">
+                                                        <option></option>
+                                                        @foreach($good_modules as $key=>$module)
+                                                            <option value="{{$key}}" @if($search['good_module_id'] == $key) selected @endif>{{$module}}</option>
+                                                        @endforeach
+
+                                                    </select>
+                                                </div>
+
 
                                                 <label class="col-sm-1 control-label">状态</label>
                                                 <div class="col-sm-2">
@@ -184,6 +196,12 @@
                                 <th>
                                     单品价格
                                 </th>
+                                <th>
+                                    单品类别
+                                </th>
+                                <th>
+                                    所属模块
+                                </th>
 
                                 <th>
                                     发布时间
@@ -225,10 +243,12 @@
                                         {{$good->title}}
                                     </td>
                                     <td>{{$good->price}}</td>
+                                    <td>{{$good->category->name}}</td>
+                                    <td>{{$good->good_module->name}}</td>
 
                                     <td>{{$good->created_at}}</td>
 
-                                    <td>{{$good->username}}</td>
+                                    <td>{{$good->admin_user->username}}</td>
 
                                     <td>
                                         @if($good->deleted_at)
@@ -275,7 +295,7 @@
 
                                         <!-- 模态框（Modal） -->
                                         <div class="modal fade" id="SetAttributeModal_{{$good->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog" style="width:50%;">
+                                            <div class="modal-dialog" style="width:80%;">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>

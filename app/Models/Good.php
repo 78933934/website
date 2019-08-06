@@ -29,6 +29,7 @@ class Good extends Model
         'product_name',
         'admin_user_id',
         'category_id',
+        'good_module_id',
         'pay_types',
         'show_comment',
         'detail_desc',
@@ -50,8 +51,14 @@ class Good extends Model
     }
 
     public function category(){
-        return $this->belongsTo(GoodCategory::class,'category_id');
+        return $this->belongsTo(GoodCategory::class,'category_id','id')->withDefault();
     }
+
+    public function good_module(){
+        return $this->belongsTo(GoodModule::class)->withDefault();
+    }
+
+
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -71,20 +78,12 @@ class Good extends Model
      */
     public function get_data($request){
 
-        $base_query =  Good::withTrashed()->with(['list_images'])
-            ->leftJoin('admin_users','admin_users.id','goods.admin_user_id');
+        $base_query =  Good::withTrashed()->with(['list_images','category','admin_user','good_module']);
 
         list($query, $search) = $this->query_conditions($base_query, $request);
 
         $data = $query->select(
-                'goods.id',
-                'goods.title',
-                'goods.name',
-                'goods.price',
-                'goods.main_image_url',
-                'goods.created_at',
-                'goods.deleted_at',
-                'admin_users.username'
+                'goods.*'
             )
             ->orderBy('goods.id', 'desc')
             ->paginate($this->page_size);
@@ -110,6 +109,12 @@ class Good extends Model
         $category_id = $request->get('category_id');
         if($category_id){
             $base_query->where('category_id', $category_id);
+        }
+
+        //单品类型
+        $good_module_id = $request->get('good_module_id');
+        if($good_module_id){
+            $base_query->where('good_module_id', $good_module_id);
         }
 
         //单品类型
@@ -143,7 +148,7 @@ class Good extends Model
         $this->page_size = $per_page;
 
 
-        $search = compact('start_date','end_date','category_id','product_id','status','keywords','per_page');
+        $search = compact('start_date','end_date','category_id','product_id','status','keywords','per_page','good_module_id');
 
         return [$base_query, $search];
     }

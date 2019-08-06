@@ -35,7 +35,7 @@
                     </div>
                     <!-- /.box-header -->
                     <!-- form start -->
-                    <form action="{{route('goods.store')}}" method="post" accept-charset="UTF-8" class="form-horizontal" enctype="multipart/form-data" pjax-container>
+                    <form action="{{route('goods.store')}}" method="post" accept-charset="UTF-8" class="form-horizontal" enctype="multipart/form-data">
 
                         <div class="box-body">
 
@@ -112,11 +112,11 @@
 
                                     <div class="col-sm-8">
 
-                                        <select class="form-control single_select" style="width: 100%;" name="product_id" required="1" >
-                                            <option></option>
-                                            <option value="1" >产品1</option>
-                                            <option value="2" >产品2</option>
-                                            <option value="3" >产品3</option>
+                                        <select class="form-control" style="width: 100%;" id="product_id" name="product_id" required="1" >
+                                            {{--<option></option>--}}
+                                            {{--<option value="1" >产品1</option>--}}
+                                            {{--<option value="2" >产品2</option>--}}
+                                            {{--<option value="3" >产品3</option>--}}
                                         </select>
                                     </div>
                                 </div>
@@ -129,9 +129,24 @@
 
                                         <select class="form-control single_select" style="width: 100%;" name="category_id" required="1" >
                                             <option></option>
-                                            <option value="1" >类型1</option>
-                                            <option value="2" >类型2</option>
-                                            <option value="3" >类型3</option>
+                                            @foreach($good_categories as $key=>$category)
+                                                <option value="{{$key}}">{{$category}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+
+                                    <label for="good_module_id" class="col-sm-2 control-label">所属模块</label>
+
+                                    <div class="col-sm-8">
+
+                                        <select class="form-control single_select" style="width: 100%;" name="good_module_id">
+                                            <option></option>
+                                            @foreach($good_modules as $key=>$module)
+                                                <option value="{{$key}}">{{$module}}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
@@ -393,6 +408,81 @@
                 allowImageRemote: false,
                 afterBlur: function () { this.sync(); }   //同步编辑器数据
             });
+
+
+            //选择产品
+            $("#product_id").select2({
+                "allowClear": true,
+                "placeholder": {"id": "", "text": "请选择"},
+                ajax: {
+                    url: "{{$erp_api_domain}}/api/product",
+                    dataType: 'json',
+                    delay: 500,
+                    data: function (params) {
+                        return {
+                            keywords: params.term, // search term
+                            page: params.page,
+                        };
+                    },
+                    processResults: function (data, params) {
+                        // parse the results into the format expected by Select2
+                        // since we are using custom formatting functions we do not need to
+                        // alter the remote JSON data, except to indicate that infinite
+                        // scrolling can be used
+                        console.log(data, params);
+                        params.page = params.page || 1;
+
+                        return {
+                            results: data.data,
+                            pagination: {
+                                more: (params.page * 30) < data.count
+                            }
+                        };
+                    },
+                    cache: true
+                },
+                // placeholder: 'Search for a repository',
+                minimumInputLength: 1,
+                templateResult: formatRepo,
+                templateSelection: formatRepoSelection
+            });
+
+            function formatRepo (repo) {
+                console.log(repo);
+                if (repo.loading) {
+                    return repo.text;
+                }
+
+                var erp_api_domain = "{{$erp_api_domain}}";
+
+                var $container = $(
+                    "<div class='select2-result-repository clearfix'>" +
+                    "<div class='select2-result-repository__avatar'>" +
+                    "<img class='thumbnail' width=\"60px\" height=\"60px\"  src='" + erp_api_domain + repo.product_image + "' /></div>" +
+                    // "<div class='select2-result-repository__meta'>" +
+                    "<div class='select2-result-repository__title'></div>" +
+                    // "<div class='select2-result-repository__description'></div>" +
+                    // "<div class='select2-result-repository__statistics'>" +
+                    // "<div class='select2-result-repository__forks'><i class='fa fa-flash'></i> </div>" +
+                    // "<div class='select2-result-repository__stargazers'><i class='fa fa-star'></i> </div>" +
+                    // "<div class='select2-result-repository__watchers'><i class='fa fa-eye'></i> </div>" +
+                    // "</div>" +
+                    // "</div>" +
+                    "</div>"
+                );
+
+                $container.find(".select2-result-repository__title").text(repo.product_name);
+                // $container.find(".select2-result-repository__description").text(repo.description);
+                // $container.find(".select2-result-repository__forks").append(repo.forks_count + " Forks");
+                // $container.find(".select2-result-repository__stargazers").append(repo.stargazers_count + " Stars");
+                // $container.find(".select2-result-repository__watchers").append(repo.watchers_count + " Watchers");
+
+                return $container;
+            }
+            function formatRepoSelection (repo) {
+                return repo.product_name;
+            }
+
 
         });
     </script>

@@ -23,6 +23,7 @@ class CreateGoodsTable extends Migration
             $table->string('product_name',255)->nullable()->comment('产品名称');
             $table->integer('admin_user_id')->comment('发布者ID');
             $table->integer('category_id')->comment('单品类型ID');
+            $table->integer('good_module_id')->comment('单品所属模块')->nullable();
             $table->string('pay_types',255)->comment('支付方式');
             $table->tinyInteger('show_comment')->default(0)->comment('是否显示评价模块，0不显示，1显示');
             $table->text('detail_desc')->comment('商品详情描述');

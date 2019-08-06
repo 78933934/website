@@ -31,6 +31,11 @@ Route::group([
     //订单导出
     $router->get('/good_orders/export', 'GoodOrderController@export')->name('good_orders.export');
 
+    //类别管理
+    $router->resource('/categories','CategoryController');
+    //模块管理
+    $router->resource('/good_modules','GoodModuleController');
+
 
 
 });
