@@ -399,7 +399,7 @@
                 uploadJson :   '/yxx/kindeditor/upload', //文件上传地址
                 fileManagerJson : '/yxx/kindeditor/manager',   //文件管理地址
                 deleteUrl  : '/yxx/kindeditor/delete', //文件删除地址
-                //urlType : 'domain',   //带域名的路径
+                urlType : 'domain',   //带域名的路径
                 extraFileUploadParams: {
                     '_token':"{{csrf_token()}}"
                 },

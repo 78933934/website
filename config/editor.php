@@ -24,6 +24,7 @@ return [
         "file_format"   => "doc,docx,xls,xlsx,ppt,htm,html,txt,rar,zip,mp4,pdf,pptx",   // 上传文件格式
         "media_format"  => "mp3,mp4,avi",                                               // 上传视音频格式
         "flash_format"  => "swf,fla",                                                   // 上传flash格式
-        "upload_path"   => "uploads",                                                   // 上传文件目录
+        "upload_path"   => "uploads",
+        "show_domain"   => 1,  // 上传文件目录
     ],
 ];

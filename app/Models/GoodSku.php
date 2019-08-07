@@ -19,6 +19,7 @@ class GoodSku extends Model
         's3_name',
         'price',
         'stock',
+        'thumb_url',
         'disabled_at'
 
     ];

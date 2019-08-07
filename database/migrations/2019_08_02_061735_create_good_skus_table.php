@@ -25,6 +25,7 @@ class CreateGoodSkusTable extends Migration
             $table->string('s3_name')->nullable();
             $table->decimal('price')->comment('实际价格');
             $table->integer('stock')->comment('库存');
+            $table->string('thumb_url')->comment('缩略图');
             $table->dateTime('disabled_at')->nullable()->comment('禁用时间');
             $table->timestamps();
 

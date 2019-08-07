@@ -19,8 +19,10 @@ Route::group([
     $router->resource('/goods','GoodController')->except(['show']);
     //商品导出
     $router->get('/goods/export', 'GoodController@export')->name('goods.export');
-    //属性设置
-    $router->resource('/good_skus', 'GoodSkuController')->only(['update']);
+    //更新sku价格
+    $router->put('/good_skus/{id}/update_price','GoodSkuController@update_price');
+    //sku启用禁用
+    $router->put('/good_skus/update_disabled_at', 'GoodSkuController@update_disabled_at');
 
     //订单管理
     $router->resource('/good_orders', 'GoodOrderController')->except(['store','show']);

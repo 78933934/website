@@ -10,24 +10,43 @@ use App\Http\Controllers\Controller;
 class GoodSkuController extends Controller
 {
 
+    /**
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update_price(Request $request, $id){
+
+        $price = $request->post('value');
+
+        $gs = GoodSku::find($id);
+
+        $gs->price = $price;
+
+        $res = $gs->save();
+
+        $msg = $res ? trans('common.update.success') : trans('common.update.fail');
+
+        return returned($res, $msg);
+    }
 
     /**
      * @param Request $request
      * @param $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, $id){
+    public function update_disabled_at(Request $request){
 
-        $g_sku = GoodSku::find($id);
+        $sku_ids = $request->post('sku_ids');
 
         $action = $request->post('action');
 
         switch ($action){
-            case 'hidden':
+            case 'disable':
                 $disabled_at = Carbon::now();
                 break;
 
-            case 'showing':
+            case 'enable':
                 $disabled_at = null;
                 break;
 
@@ -35,8 +54,7 @@ class GoodSkuController extends Controller
                 return response()->json(['success' => false, 'msg' => '参数不对']);
         }
 
-        $g_sku->disabled_at = $disabled_at;
-        $res = $g_sku->save();
+        $res = GoodSku::whereIn('id',$sku_ids)->update(['disabled_at' => $disabled_at]);
 
         $msg = $res ? '设置成功':'设置失败';
 

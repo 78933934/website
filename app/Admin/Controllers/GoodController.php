@@ -246,7 +246,7 @@ class GoodController extends BaseController
     protected function upload($file){
 
         # 允许上传的扩展名
-        $allow_extensions = ['jpg','jpeg','png','gif','mp4'];
+        $allow_extensions = ['jpg','jpeg','png','gif','mp4','mpeg'];
 
 //        if(!$file->isValid())
 //        {
@@ -254,7 +254,7 @@ class GoodController extends BaseController
 //        }
 
         # 扩展名
-        $extension = $file->extension();
+        $extension = strtolower($file->extension());
 
         if(!in_array(strtolower($extension), $allow_extensions))
         {

@@ -32,6 +32,7 @@ $api->version('v1', function ($api) {
 
         $api->group([
             'middleware' => [
+//                \App\Http\Middleware\AllowCors::class,
 //                'session'
             ],
         ], function ($api) {

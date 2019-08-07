@@ -146,7 +146,7 @@ class GoodController extends Controller
 
             $item = [
                 'k' => $attribute->name,
-                'v' => $attribute->attribute_values()->select('remote_id as id','name','thumb_url as imageUrl')->get(),
+                'v' => $attribute->attribute_values()->select('remote_id as id','name','thumb_url as imgUrl')->get(),
                 'k_s' => 's'.$key
             ];
 
@@ -155,8 +155,17 @@ class GoodController extends Controller
 
         //sku list
         $skus = $good->skus()->select('sku_id as id','price','s1','s2','s3','stock as stock_num')->get();
+        $skus = $skus->map(function($sku){
+            $sku->price =  ($sku->price) * 100;
+            return $sku;
+        });
 
         $good->tree = $attrs;
+        if($attrs->count() == 0){
+            $good->tree = null;
+        }
+        $good->none_sku = $good->tree ? false : true;
+
         $good->list = $skus;
         $good->list_images = $list_images;
 
