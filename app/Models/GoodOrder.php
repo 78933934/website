@@ -41,6 +41,17 @@ class GoodOrder extends Model
      */
     const AUDIT_REFUSED_TYPE = 2;
 
+    /**
+     * @搜索条件
+     */
+    const SEARCH_ITEM_ORDER_SN_CODE = 'order_sn';
+    const SEARCH_ITEM_ORDER_SN = '订单号';
+
+    const SEARCH_ITEM_GOOD_NAME_CODE = 'good_name';
+    const SEARCH_ITEM_GOOD_NAME = '单品名';
+
+    const SEARCH_ITEM_SKUID_CODE = 'sku_id';
+    const SEARCH_ITEM_SKUID = 'SKUID';
 
 
     public function order_skus(){
@@ -101,10 +112,34 @@ class GoodOrder extends Model
 
         //关键词
         $keywords = $request->get('keywords');
-        if($keywords){
-            $base_query->where(function($query) use ($keywords){
-                $query->where('good_orders.sn', $keywords);
-            });
+        $search_item = $request->get('search_item');
+        switch ($search_item){
+            case self::SEARCH_ITEM_ORDER_SN_CODE:
+                $base_query->where('good_orders.sn', $keywords);
+                break;
+
+            case self::SEARCH_ITEM_GOOD_NAME_CODE://筛选单品名
+                $good = Good::where('name', $keywords)->first();
+
+               $good_order_ids =  GoodOrderSku::where('good_id',$good ? $good->id:null)
+                    ->whereBetween('created_at', [$start_date, Carbon::parse($end_date)->endOfDay()])
+                    ->pluck('good_order_id')
+                    ->unique();
+
+               $base_query->whereIn('good_orders.id', $good_order_ids);
+
+                break;
+            case self::SEARCH_ITEM_SKUID_CODE://筛选skuid
+                $good_order_ids = GoodOrderSku::where('sku_id', $keywords)
+                    ->whereBetween('created_at', [$start_date, Carbon::parse($end_date)->endOfDay()])
+                    ->pluck('good_order_id')
+                    ->unique();
+
+                $base_query->whereIn('good_orders.id', $good_order_ids);
+
+                break;
+            default:
+                break;
         }
 
         //分页大小
@@ -112,7 +147,7 @@ class GoodOrder extends Model
         $this->page_size = $per_page;
 
 
-        $search = compact('start_date','end_date','status','keywords','per_page');
+        $search = compact('start_date','end_date','status','keywords','per_page','search_item');
 
         return [$base_query, $search];
     }

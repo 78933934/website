@@ -30,7 +30,10 @@ class GoodOrderController extends Controller
         //状态
         $status = config('order.status');
 
-        return view('admin.good_order.index', compact('orders', 'search', 'status'));
+        //搜索项
+        $search_items = config('order.search_items');
+
+        return view('admin.good_order.index', compact('orders', 'search', 'status','search_items'));
     }
 
     /**

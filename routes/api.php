@@ -38,10 +38,20 @@ $api->version('v1', function ($api) {
         ], function ($api) {
             //商品详情
             $api->get('/goods/{id}', 'GoodController@show')->name('user.good.show');
+            //商品列表
+            $api->get('/goods', 'GoodController@index')->name('user.good.index');
 
             //订单相关
             $api->post('/good_orders', 'GoodOrderController@store')->name('user.order.store');
 
+            //首页
+            $api->get('/index', 'IndexController@index')->name('user.index');
+
+            //商品分类列表
+            $api->get('/good_categories', 'GoodCategoryController@index')->name('user.good.category');
+
+            //商品模块列表
+            $api->get('/good_modules', 'GoodModuleController@index')->name('user.good.module');
         });
     });
 

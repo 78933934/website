@@ -412,6 +412,11 @@
 
             //选择产品
             $("#product_id").select2({
+                language: {
+                    inputTooShort: function () {
+                        return "请输入产品关键字";
+                    }
+                },
                 "allowClear": true,
                 "placeholder": {"id": "", "text": "请选择"},
                 ajax: {

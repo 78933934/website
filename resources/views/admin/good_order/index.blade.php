@@ -65,32 +65,25 @@
                                                     </select>
                                                 </div>
 
-                                            </div>
+                                                <div class="col-md-1"></div>
 
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div>
-                                    <div class="box-body">
-                                        <div class="fields-group">
-                                            <div class="form-group">
-
-                                                <label class="col-sm-1 control-label">
-                                                    关键词搜索
-                                                </label>
-                                                <div class="col-sm-6">
+                                                <div class="col-md-1">
+                                                    <select class="form-control status" name="search_item">
+                                                        <option></option>
+                                                        @foreach($search_items as $key=>$item)
+                                                            <option value="{{$key}}" @if($search['search_item'] == $key)selected @endif>{{$item}}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <div class="col-sm-3">
                                                     <div class="input-group input-group-sm">
                                                         <div class="input-group-addon">
                                                             <i class="fa fa-pencil"></i>
                                                         </div>
 
-                                                        <input type="text" class="form-control keywords" placeholder="订单号" name="keywords" value="{{$search['keywords']}}">
+                                                        <input type="text" class="form-control keywords" placeholder="订单号/单品名/SKUID" name="keywords" value="{{$search['keywords']}}">
                                                     </div>
                                                 </div>
-
-
 
                                             </div>
 
@@ -98,6 +91,7 @@
                                     </div>
                                 </div>
                             </div>
+
                             <!-- /.box-body -->
 
                             <div class="box-footer">
@@ -178,7 +172,7 @@
                                     留言
                                 </th>
                                 <th>
-                                    SKU信息
+                                    单品名/SKU信息
                                 </th>
 
                                 <th>
@@ -259,7 +253,7 @@
                                     <td style="width:15%; word-break:break-all; word-wrap:break-word; white-space:inherit">
                                         @foreach($order->order_skus as $order_sku)
                                             @php($sku = $order_sku->sku_info)
-                                            <span>{{$sku->good->name. '-' .$sku->sku_id. ':' .$sku->s1_name.' '.$sku->s2_name.' '.$sku->s3_name. ' x'. $order_sku->sku_nums }}</span><br>
+                                            <span>{{$sku->good->name. '【' .$sku->sku_id. '】 ' .$sku->s1_name.' '.$sku->s2_name.' '.$sku->s3_name. ' x'. $order_sku->sku_nums }}</span><br>
                                         @endforeach
                                     </td>
                                     <td style="width:6%; word-break:break-all; word-wrap:break-word; white-space:inherit">

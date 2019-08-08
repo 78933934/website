@@ -35,8 +35,8 @@ if(!function_exists('generate_sn')){
  * @api返回json
  */
 if(!function_exists('returned')){
-    function returned($success, $msg){
-        return response()->json(['success' => $success, 'msg' => $msg]);
+    function returned($success, $msg,$data=[]){
+        return response()->json(['success' => $success, 'msg' => $msg,'data' => $data ]);
     }
 }
 

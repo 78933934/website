@@ -3,15 +3,97 @@
 namespace App\Http\Controllers\User;
 
 use App\Models\Good;
+use App\Models\GoodModule;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 class GoodController extends Controller
 {
-    //
+    /**
+     * @api {get} /api/user/goods  1.3 商品列表
+     * @apiName GetGoods
+     * @apiGroup User
+     *
+     * @apiParam {Number} [category_id] 商品类别ID
+     * @apiParam {Number} [good_module_id] 商品模块id
+     * @apiParam {Number} [page] 当前分页
+     *
+     * @apiSuccess {Array} data 商品列表数据
+     * @apiSuccess {Number} current_page 当前页码
+     * @apiSuccess {Number} last_page 最后一页（总页数）
+     * @apiSuccess {string} prev_page_url 上一页链接
+     * @apiSuccess {string} last_page_url 下一页链接
+     * @apiSuccess {Number} total 总条数
+     *
+     *
+     * @apiSuccessExample Success-Response:
+     *     HTTP/1.1 200 OK
+     * {
+     *    "success": true,
+     *    "msg": "",
+     *    "data": {
+     *        "current_page": 1,
+     *        "data": [
+     *            {
+     *                "id": 45,
+     *                "title": "测试0807",
+     *                "original_price": "999.00",
+     *                "price": "$888.00",
+     *                "good_module_id": 2,
+     *                "main_image_url": "http://192.168.1.133:8081/storage/uploads/image/2019/08/08/c10410f41dcf17266e42e9a1de5cd262.png"
+     *            },
+     *            {
+     *                "id": 44,
+     *                "title": "测试0807",
+     *                "original_price": "999.00",
+     *                "price": "$888.00",
+     *                "good_module_id": 2,
+     *                "main_image_url": "http://192.168.1.133:8081/storage/uploads/image/2019/08/08/0ca6091f438822002b53a6a29617e078.png"
+     *            },
+     *            {
+     *                "id": 43,
+     *                "title": "122222",
+     *                "original_price": "111.00",
+     *                "price": "$111.00",
+     *                "good_module_id": 2,
+     *                "main_image_url": "http://192.168.1.133:8081/storage/uploads/image/2019/08/07/8e599aec96ca117adb8f0227047819e1.png"
+     *            },
+     *            {
+     *                "id": 42,
+     *                "title": "联想ThinkPad X1 Carbon 2018（05CD）英特尔酷睿i7 14英寸轻薄笔记本电脑（i7-8550U 16G 1TSSD WQHD Win10Pro）黑色",
+     *                "original_price": "999.00",
+     *                "price": "$888.00",
+     *                "good_module_id": 1,
+     *                "main_image_url": "http://192.168.1.133:8081/storage/uploads/image/2019/08/07/f6cfcfdb53d78856bc8f5d78e97f7a89.png"
+     *            },
+     *            {
+     *                "id": 41,
+     *                "title": "联想ThinkPad X1 Carbon 2018（05CD）英特尔酷睿i7 14英寸轻薄笔记本电脑（i7-8550U 16G 1TSSD WQHD Win10Pro）黑色",
+     *                "original_price": "99999.00",
+     *                "price": "$88888.00",
+     *                "good_module_id": 4,
+     *                "main_image_url": "http://192.168.1.133:8081/storage/uploads/image/2019/08/07/4f21e882d657388dbb10c1aadb5d9a77.png"
+     *            },
+     *        ],
+     *        "first_page_url": "http://192.168.1.133:8081/api/user/goods?page=1",
+     *        "from": 1,
+     *        "last_page": 2,
+     *        "last_page_url": "http://192.168.1.133:8081/api/user/goods?page=2",
+     *        "next_page_url": "http://192.168.1.133:8081/api/user/goods?page=2",
+     *        "path": "http://192.168.1.133:8081/api/user/goods",
+     *        "per_page": 20,
+     *        "prev_page_url": null,
+     *        "to": 20,
+     *        "total": 22
+     *    }
+     *}
+     */
+    public function index(Request $request){
 
-    public function index(){
+        $gd = new Good();
+        $goods = $gd->user_good_data($request);
 
+        return returned(true, '', $goods);
     }
 
     /**
@@ -154,7 +236,10 @@ class GoodController extends Controller
         }
 
         //sku list
-        $skus = $good->skus()->select('sku_id as id','price','s1','s2','s3','stock as stock_num')->get();
+        $skus = $good->skus()
+            ->select('sku_id as id','price','s1','s2','s3','stock as stock_num')
+            ->whereNull('disabled_at')
+            ->get();
         $skus = $skus->map(function($sku){
             $sku->price =  ($sku->price) * 100;
             return $sku;
@@ -164,18 +249,23 @@ class GoodController extends Controller
         if($attrs->count() == 0){
             $good->tree = null;
         }
+
+//        dd($good->tree);
         $good->none_sku = $good->tree ? false : true;
 
         $good->list = $skus;
         $good->list_images = $list_images;
 
         if($good->attributes->count() == 0){
-            $good->none_sku = 0;
-            $good->collection_id = $good->id;
+//            $good->none_sku = 0;
+            $good->collection_id = $skus->first()->id;
         }
 
         //货币符号
         $good->money_sign = config('money_sign');
+
+        //商品总库存
+        $good->stock_num = 99999;
 
         unset($good->attributes);
 

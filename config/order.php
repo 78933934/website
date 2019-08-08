@@ -17,6 +17,12 @@ return [
         1 => '货到付款',
         2 => '在线支付',
     ],
+
+    'search_items' => [
+        GoodOrder::SEARCH_ITEM_ORDER_SN_CODE => GoodOrder::SEARCH_ITEM_ORDER_SN,
+        GoodOrder::SEARCH_ITEM_GOOD_NAME_CODE => GoodOrder::SEARCH_ITEM_GOOD_NAME,
+        GoodOrder::SEARCH_ITEM_SKUID_CODE => GoodOrder::SEARCH_ITEM_SKUID
+    ],
 ];
 
 

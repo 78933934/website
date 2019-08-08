@@ -40,9 +40,23 @@ class GoodOrderController extends Controller
      *
      * @apiSuccessExample Success-Response:
      *     HTTP/1.1 200 OK
-     * {
+     *{
      *    "success": true,
-     *    "msg": "提交订单成功"
+     *    "msg": "提交订单成功",
+     *    "data": {
+     *        "price": "$200.89",
+     *        "ip": "192.168.1.133",
+     *        "sn": "2019080797505710",
+     *        "receiver_name": "sky",
+     *        "receiver_phone": "19918112221",
+     *        "receiver_email": "qqqqqq8888@gmail.com",
+     *        "address": "北京海淀区上地三街",
+     *        "short_address": "清河大街888号小米大厦",
+     *        "leave_word": "尽快发货~~~~~",
+     *        "updated_at": "2019-08-07 12:55:54",
+     *        "created_at": "2019-08-07 12:55:54",
+     *        "id": 18
+     *    }
      *}
      *
      * @apiErrorExample Error-Response:
@@ -81,9 +95,14 @@ class GoodOrderController extends Controller
             'leave_word' => $request->post('leave_word'),
         ];
 
+        $cart_data = $cart_data->map(function($item){
+            $item['price'] = round($item['price']/100,2);
+            return $item;
+        });
+
 
         $skus_price = $cart_data->map(function($item){
-            return ($item['price'] * $item['sku_nums']);
+            return $item['price'] * $item['sku_nums'];
         });
 
         $insert_data = [
@@ -95,8 +114,9 @@ class GoodOrderController extends Controller
         $go = GoodOrder::create(array_merge($insert_data, $address));
 
         if($go){
+
             $go->order_skus()->createMany($cart_data->all());
-            return returned(true, '提交订单成功');
+            return returned(true, '提交订单成功', $go);
         }else{
             return returned(false, '提交订单失败');
         }

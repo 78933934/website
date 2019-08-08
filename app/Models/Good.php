@@ -158,6 +158,10 @@ class Good extends Model
         return json_decode($value);
     }
 
+    public function getPriceAttribute($value){
+        return config('money_sign').$value;
+    }
+
     /**
      * @param $request
      * @return mixed
@@ -183,4 +187,26 @@ class Good extends Model
             ->get();
 
     }
+
+    /**
+     * 前台获取商品列表
+     * @param $request
+     * @return mixed
+     */
+    public function user_good_data($request){
+
+        $category_id = $request->get('category_id');
+        $good_module_id = $request->get('good_module_id');
+
+        return Good::when($category_id,function($query) use($category_id){
+            $query->where('category_id', $category_id);
+        })
+            ->when($good_module_id, function($query) use ($good_module_id){
+            $query->where('good_module_id', $good_module_id);
+        })
+            ->select('id','title','original_price','price','good_module_id','main_image_url')
+            ->orderBy('id', 'desc')
+            ->paginate($this->page_size);
+    }
+
 }

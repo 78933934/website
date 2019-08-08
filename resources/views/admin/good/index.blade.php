@@ -69,11 +69,11 @@
                                                 </div>
 
                                                 <label class="col-sm-1 control-label">产品名称</label>
-                                                <div class="col-sm-2">
-                                                    <select class="form-control status" name="product_id">
-                                                        <option></option>
-                                                        <option value="1">产品1</option>
-                                                        <option value="2">产品2</option>
+                                                <div class="col-sm-3">
+                                                    <select class="form-control" name="product_id" id="product_id">
+                                                        {{--<option></option>--}}
+                                                        {{--<option value="1">产品1</option>--}}
+                                                        {{--<option value="2">产品2</option>--}}
 
                                                     </select>
                                                 </div>
@@ -561,6 +561,70 @@
                 }
             },
         });
+
+        //选择产品
+        $("#product_id").select2({
+            language: {
+                inputTooShort: function () {
+                    return "请输入产品关键字";
+                }
+            },
+            "allowClear": true,
+            "placeholder": {"id": "", "text": "请选择"},
+            ajax: {
+                url: "{{$erp_api_domain}}/api/product",
+                dataType: 'json',
+                delay: 500,
+                data: function (params) {
+                    return {
+                        keywords: params.term, // search term
+                        page: params.page,
+                    };
+                },
+                processResults: function (data, params) {
+                    console.log(data, params);
+                    params.page = params.page || 1;
+
+                    return {
+                        results: data.data,
+                        pagination: {
+                            more: (params.page * 30) < data.count
+                        }
+                    };
+                },
+                cache: true
+            },
+            // placeholder: 'Search for a repository',
+            minimumInputLength: 1,
+            templateResult: formatRepo,
+            templateSelection: formatRepoSelection
+        });
+
+        function formatRepo (repo) {
+            console.log(repo);
+            if (repo.loading) {
+                return repo.text;
+            }
+
+            var erp_api_domain = "{{$erp_api_domain}}";
+
+            var $container = $(
+                "<div class='select2-result-repository clearfix'>" +
+                "<div class='select2-result-repository__avatar'>" +
+                "<img class='thumbnail' width=\"60px\" height=\"60px\"  src='" + erp_api_domain + repo.product_image + "' /></div>" +
+                // "<div class='select2-result-repository__meta'>" +
+                "<div class='select2-result-repository__title'></div>" +
+                "</div>"
+            );
+
+            $container.find(".select2-result-repository__title").text(repo.product_name);
+
+            return $container;
+        }
+        function formatRepoSelection (repo) {
+            return repo.product_name;
+        }
+
 
 
     </script>

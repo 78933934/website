@@ -15,7 +15,7 @@
                 <tr><th>单品名称</th><th>数量</th><th>SKU信息</th></tr>
                 @foreach($detail->order_skus as $order_sku)
                     @php($sku = $order_sku->sku_info)
-                    <tr><td>{{$sku->good->name}}</td><td>{{$order_sku->sku_nums}}</td><td>{{$sku->sku_id. ':' .$sku->s1_name.' '.$sku->s2_name.' '.$sku->s3_name}}</td></tr>
+                    <tr><td>{{$sku->good->name}}</td><td>{{$order_sku->sku_nums}}</td><td>{{'【'.$sku->sku_id. '】' .$sku->s1_name.' '.$sku->s2_name.' '.$sku->s3_name}}</td></tr>
                 @endforeach
             </table>
         </td>

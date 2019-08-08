@@ -86,10 +86,12 @@ class BindGoodAttributeListener
         foreach ($sku_datas->all() as $sku_data){
 
             $tmp = [];
-            foreach ($sku_data['attrs'] as $key=>$attr){
-                $k = 's'.intval($key);
-                $tmp[$k] = $attr['sku_value_id'];
-                $tmp[$k.'_name'] = $attr['sku_value_name'];
+            if($sku_data['attrs']){
+                foreach ($sku_data['attrs'] as $key=>$attr){
+                    $k = 's'.intval($key);
+                    $tmp[$k] = $attr['sku_value_id'];
+                    $tmp[$k.'_name'] = $attr['sku_value_name'];
+                }
             }
 
             $insert_data = array_merge($tmp,[
@@ -122,25 +124,28 @@ class BindGoodAttributeListener
         $result_data = $this->get_api_data($get_attr_url);
         $attr_data = unserialize($result_data->spec_value);
 
-        foreach ($attr_data as $data){
+        if($attr_data){
+            foreach ($attr_data as $data){
 
-            $attr_obj = $good->attributes()->create([
-               'remote_id' => $data['attr_id'],
-               'name' => $data['attr_name']
-            ]);
-
-            $values = collect([]);
-
-            foreach ($data['attr_value'] as $item){
-                $values->push([
-                    'remote_id' => $item['attr_value_id'],
-                    'name' => $item['attr_value_name'],
-                    'thumb_url' => isset($item['attr_value_image']) ? env('ERP_API_DOMAIN').$item['attr_value_image'] : null,
+                $attr_obj = $good->attributes()->create([
+                    'remote_id' => $data['attr_id'],
+                    'name' => $data['attr_name']
                 ]);
-            }
 
-            $attr_obj->attribute_values()->createMany($values->all());
+                $values = collect([]);
+
+                foreach ($data['attr_value'] as $item){
+                    $values->push([
+                        'remote_id' => $item['attr_value_id'],
+                        'name' => $item['attr_value_name'],
+                        'thumb_url' => isset($item['attr_value_image']) ? env('ERP_API_DOMAIN').$item['attr_value_image'] : null,
+                    ]);
+                }
+
+                $attr_obj->attribute_values()->createMany($values->all());
+            }
         }
+
     }
 
 

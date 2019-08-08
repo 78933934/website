@@ -55,7 +55,7 @@ Grid::init(function (Grid $grid) {
 
     $grid->disableFilter();
 
-//    $grid->disableRowSelector();
+    $grid->disableRowSelector();
 
     $grid->disableColumnSelector();
 
