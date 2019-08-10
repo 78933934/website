@@ -38,6 +38,7 @@ class CreateGoodsTable extends Migration
             $table->index('admin_user_id');
             $table->index('product_id');
             $table->index('category_id');
+            $table->index('good_module_id');
         });
     }
 

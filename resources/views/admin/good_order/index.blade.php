@@ -81,7 +81,7 @@
                                                             <i class="fa fa-pencil"></i>
                                                         </div>
 
-                                                        <input type="text" class="form-control keywords" placeholder="订单号/单品名/SKUID" name="keywords" value="{{$search['keywords']}}">
+                                                        <input type="text" class="form-control keywords" placeholder="请输入对应筛选项值" name="keywords" value="{{$search['keywords']}}">
                                                     </div>
                                                 </div>
 

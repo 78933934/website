@@ -159,7 +159,7 @@ class Good extends Model
     }
 
     public function getPriceAttribute($value){
-        return config('money_sign').$value;
+        return $value;
     }
 
     /**

@@ -17,8 +17,8 @@ class CreateGoodSkusTable extends Migration
             $table->increments('id');
             $table->integer('sku_id')->comment('产品sku');
             $table->integer('good_id')->comment('商品ID');
-            $table->integer('s1')->comment('规格1 ID');
-            $table->string('s1_name')->comment('规格1值名称');
+            $table->integer('s1')->comment('规格1 ID')->nullable();
+            $table->string('s1_name')->comment('规格1值名称')->nullable();
             $table->integer('s2')->nullable();
             $table->string('s2_name')->nullable();
             $table->integer('s3')->nullable();

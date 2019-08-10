@@ -194,7 +194,7 @@
                                     单品展示名
                                 </th>
                                 <th>
-                                    单品价格
+                                    单品价格({{$money_sign}})
                                 </th>
                                 <th>
                                     单品类别
@@ -266,7 +266,7 @@
                                             <ul class="dropdown-menu" style="min-width: 50px !important;box-shadow: 0 2px 3px 0 rgba(0,0,0,.2);border-radius:0;left: -65px;top: 5px;">
 
                                                 @if(!$good->deleted_at)
-                                                <li><a href="#" data-toggle="modal" data-target="#editModal" data-remote="{{route('goods.edit',['id' => $good->id])}}">编辑</a></li>
+                                                <li><a href="#" data-toggle="modal" data-target="#editModal_{{$good->id}}" data-remote="{{route('goods.edit',['id' => $good->id])}}">编辑</a></li>
                                                 <li><a href="#" data-toggle="modal" data-target="#SetAttributeModal_{{$good->id}}">SKU配置</a></li>
                                                 <li><a href="#" id ="disable_{{$good->id}}" data-id="{{$good->id}}" data-title="禁用" data-action="disable" class="grid-row-action">禁用</a></li>
                                                 @else
@@ -277,7 +277,7 @@
                                         </div>
 
                                         <!-- 模态框（Modal） -->
-                                        <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                        <div class="modal fade" id="editModal_{{$good->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                                             <div class="modal-dialog" style="width:100%">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
@@ -478,6 +478,11 @@
             var action = $(this).data('action');
             var title = action == 'disable' ? '禁用' : '启用';
             var sku_ids = $.admin.grid.selected();
+
+            if($.admin.grid.selected().length == 0){
+                swal('请先选择一条数据','','error');
+                return false;
+            }
 
             swal({
                 title: "确认要" + title + "吗?",

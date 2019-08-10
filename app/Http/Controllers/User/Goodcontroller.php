@@ -246,7 +246,7 @@ class GoodController extends Controller
         });
 
         $good->tree = $attrs;
-        if($attrs->count() == 0){
+        if($attrs->count() == 0 || $skus->count() ==0){
             $good->tree = null;
         }
 
@@ -256,8 +256,9 @@ class GoodController extends Controller
         $good->list = $skus;
         $good->list_images = $list_images;
 
+        $good->collection_id = null;
+
         if($good->attributes->count() == 0){
-//            $good->none_sku = 0;
             $good->collection_id = $skus->first()->id;
         }
 

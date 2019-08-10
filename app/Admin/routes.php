@@ -37,6 +37,8 @@ Route::group([
     $router->resource('/categories','CategoryController');
     //模块管理
     $router->resource('/good_modules','GoodModuleController');
+    //轮播图管理
+    $router->resource('/slides','SlideController')->except(['index']);
 
 
 

@@ -9,6 +9,12 @@ class GoodModule extends Model
     //
     protected $table = 'good_modules';
 
+    protected $fillable = [
+        'sort',
+        'name',
+        'image_url',
+    ];
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */

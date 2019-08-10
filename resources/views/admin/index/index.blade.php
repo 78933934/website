@@ -25,7 +25,7 @@
             </div><!-- /.box-body -->
         </div>
 
-        <div  class="box box-primary box-solid" style="width: 90%">
+        <div  class="box box-info box-solid" style="width: 90%">
             <div class="box-header with-border">
                 <h3 class="box-title">统计信息</h3>
                 <div class="box-tools pull-right">
