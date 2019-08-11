@@ -36,15 +36,16 @@ class GoodModuleController extends BaseController
 
         $req = $request->only('name','sort');
 
-        $module_image_file = $request->file('module_image_file');
-
-        $image_url = $module_image_file ? $this->upload($module_image_file) : null;
-
-        $insert_data = array_merge($req,['image_url' => $image_url]);
-
-        $mod = GoodModule::create($insert_data);
+        $mod = GoodModule::create($req);
 
         if($mod){
+            $module_image_list = $request->list;
+            $tmp = collect([]);
+            foreach ($module_image_list as $item){
+                $image_url = $this->upload($item['image_file']);
+                $tmp->push(['good_id' => $item['good_id'],'image_url' => $image_url]);
+            }
+            $result = $mod->good_module_images()->createMany($tmp->all());
             return redirect(route('good_modules.index'))->with('success', trans('common.create.success'));
         }else{
             return redirect(route('good_modules.index'))->with('error', trans('common.create.fail'));

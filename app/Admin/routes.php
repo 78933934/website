@@ -40,6 +40,9 @@ Route::group([
     //轮播图管理
     $router->resource('/slides','SlideController')->except(['index']);
 
+    //搜索商品
+    $router->get('/search_goods', 'GoodController@search');
+
 
 
 });

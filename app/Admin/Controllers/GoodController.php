@@ -283,4 +283,20 @@ class GoodController extends BaseController
         return $result ? asset('storage/'.$result) : false;
     }
 
+    public function search(Request $request){
+
+        $keywords = $request->get('keywords');
+
+        if(!$keywords){
+            return returned(false,'关键词不能为空');
+        }
+
+        $result = Good::where('name', 'like', '%'. $keywords.'%')
+            ->select('main_image_url','name','id')
+            ->paginate(20);
+
+
+        return $result;
+    }
+
 }

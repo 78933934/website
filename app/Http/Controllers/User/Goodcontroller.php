@@ -91,7 +91,7 @@ class GoodController extends Controller
     public function index(Request $request){
 
         $gd = new Good();
-        $goods = $gd->user_good_data($request);
+        $goods = $gd->user_good_data($request->all());
 
         return returned(true, '', $goods);
     }

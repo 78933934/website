@@ -22,6 +22,10 @@ class GoodModule extends Model
         return $this->hasMany(Good::class);
     }
 
+    public function good_module_images(){
+        return $this->hasMany(GoodModuleImage::class);
+    }
+
     public function get_data(){
 
         return self::with(['goods' => function($query){

@@ -193,10 +193,10 @@ class Good extends Model
      * @param $request
      * @return mixed
      */
-    public function user_good_data($request){
+    public function user_good_data($search = []){
 
-        $category_id = $request->get('category_id');
-        $good_module_id = $request->get('good_module_id');
+        $category_id = array_get($search, 'category_id', null);
+        $good_module_id = array_get($search, 'good_module_id', null);
 
         return Good::when($category_id,function($query) use($category_id){
             $query->where('category_id', $category_id);
@@ -204,7 +204,14 @@ class Good extends Model
             ->when($good_module_id, function($query) use ($good_module_id){
             $query->where('good_module_id', $good_module_id);
         })
-            ->select('id','title','original_price','price','good_module_id','main_image_url')
+            ->select(
+                'id as goodsId',
+                'title as name',
+                'original_price as mallPrice',
+                'price',
+                'good_module_id',
+                'main_image_url as image'
+            )
             ->orderBy('id', 'desc')
             ->paginate($this->page_size);
     }

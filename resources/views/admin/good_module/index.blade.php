@@ -57,7 +57,7 @@
                                 </th>
 
                                 <th>
-                                    模块封面
+                                    展示位图片
                                 </th>
 
                                 <th>
@@ -82,18 +82,24 @@
                             @foreach($good_modules as $module)
                                 <tr>
                                     <td>{{$module->id}}</td>
-                                    <td style="width: 80px;">
-                                        <div style="width: 70px;"
+                                    <td>
+
+                                        @foreach($module->good_module_images as $good_module_image)
+                                        <div style="width: 170px;"
                                              title="{{$module->name}}"
                                              data-container="body"
                                              data-toggle="popover"
                                              data-placement="right"
                                              data-trigger="hover"
                                              data-html="true"
-                                             data-content="<img src='{{$module->image_url}}' class='thumbnail' width='260px' height='260px'  />"
+                                             data-content="<img src='{{$good_module_image->image_url}}' class='thumbnail' width='260px' height='260px'  />"
                                         >
-                                            <img src='{{$module->image_url}}' class='thumbnail' width="60px" height="60px" />
+                                            <img src='{{$good_module_image->image_url}}' class='thumbnail' width="60px" height="60px" />
                                         </div>
+
+                                            <span>对应单品名：{{$good_module_image->good->name}}</span>
+
+                                       @endforeach
                                     </td>
                                     <td>{{$module->name}}</td>
                                     <td>{{$module->sort}}</td>
@@ -106,7 +112,7 @@
                                             </a>
                                             <ul class="dropdown-menu" style="min-width: 50px !important;box-shadow: 0 2px 3px 0 rgba(0,0,0,.2);border-radius:0;left: -65px;top: 5px;">
 
-                                                <li><a href="#" data-toggle="modal" data-target="#editModal_{{$module->id}}" data-remote="{{route('good_modules.edit',['id' => $module->id])}}">编辑</a></li>
+                                                {{--<li><a href="#" data-toggle="modal" data-target="#editModal_{{$module->id}}" data-remote="{{route('good_modules.edit',['id' => $module->id])}}">编辑</a></li>--}}
                                                 <li><a href="#" id ="disable_{{$module->id}}" data-id="{{$module->id}}" data-title="删除" data-action="disable" class="grid-row-action">删除</a></li>
 
                                             </ul>
@@ -114,7 +120,7 @@
 
                                         <!-- 模态框（Modal） -->
                                         <div class="modal fade" id="editModal_{{$module->id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog" style="width:60%">
+                                            <div class="modal-dialog" style="width:100%">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
